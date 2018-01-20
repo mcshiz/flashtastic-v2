@@ -1,6 +1,10 @@
 <template>
-<div class="container">
-	<div class="row"><h1>{{selectedDeck.name}}</h1></div>
+<div class="content">
+	<div class="row">
+		<div class="col">
+			<h1>{{selectedDeck.name}}</h1>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-12 col-sm-10 col-md-6">
 			<span>Card {{currentIndex + 1}} of {{selectedDeckLength}}</span>
@@ -12,10 +16,10 @@
 	</div>
 	<div class="row">
 		<div class="col-12 col-sm-10 col-md-6">
-			<button class='btn btn-info card-nav' v-on:click="goToPreviousCard()" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
-			<button class='btn btn-secondary' v-on:click="flipCard()">Flip Card</button>
-			<button class='btn btn-info card-nav' v-on:click="goToNextCard()" :disabled="currentIndex + 1 === selectedDeck.questions.length"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
-			<button class='btn btn-danger' v-on:click="reset()"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
+			<button class='btn ripple btn-info card-nav' v-on:click="goToPreviousCard()" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
+			<button class='btn ripple btn-secondary' v-on:click="flipCard()">Flip Card</button>
+			<button class='btn ripple btn-info card-nav' v-on:click="goToNextCard()" :disabled="currentIndex + 1 === selectedDeck.questions.length"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+			<button class='btn ripple btn-danger' v-on:click="reset()"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
 		</div>
 	</div>
 </div>
@@ -53,7 +57,6 @@ export default {
 	},
 	data() {
 		return {
-			msg: 'Welcome to Your Vue.js App',
 			currentIndex: 0,
 			showAnswer: false
 		}

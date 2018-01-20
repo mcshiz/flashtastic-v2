@@ -1,5 +1,5 @@
 <template>
-	<div class='home'>
+	<div class='content'>
 		<h1>{{ msg }}</h1>
 		<deck-list></deck-list>
 	</div>
@@ -23,5 +23,6 @@ export default {
 	h1, h2 {
 		font-weight: normal;
 	}
+
 
 </style>

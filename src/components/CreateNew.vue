@@ -1,5 +1,5 @@
 <template>
-		<div class="container">
+		<div class="content">
 			<!-- Modal -->
 			<div class="modal fade" id="nameDeckModal" tabindex="-1" role="dialog"  aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
@@ -13,7 +13,7 @@
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" v-on:click="saveDeckName">Save changes</button>
+							<button type="button" class="btn ripple btn-primary" v-on:click="saveDeckName">Save changes</button>
 						</div>
 					</div>
 				</div>
@@ -24,7 +24,7 @@
 			<div class="row">
 				<div class="col deck-title-container">
 					<span class="deck-title">{{newDeckName}}</span>
-					<button class="btn btn-light deck-title-edit-button" data-toggle="modal" data-target="#nameDeckModal">
+					<button class="btn ripple btn-light deck-title-edit-button" data-toggle="modal" data-target="#nameDeckModal">
 						<i class="fa fa-pencil" aria-hidden="true"></i>
 					</button>
 				</div>
@@ -40,10 +40,10 @@
 									<b class="new-question-label">Answer:</b> {{newQuestion.answer}}
 								</span>
 								<div class="col-auto col-md-1 pull-right" >
-									<button class="btn btn-sm btn-primary">Edit</button>
+									<button class="btn ripple btn-primary">Edit</button>
 								</div>
 								<div class="col-auto col-md-1 pull-right">
-									<button class="btn btn-sm btn-danger">Delete</button>
+									<button class="btn ripple btn-danger">Delete</button>
 								</div>
 							</div>
 						</li>
@@ -67,10 +67,10 @@
 			</div>
 			<div class="row">
 				<div class="col text-left">
-				<button class="btn btn-success" v-on:click="saveCard">Save</button>
+				<button class="btn ripple btn-success" v-on:click="saveCard">Save</button>
 				</div>
 				<div class="col text-right">
-					<button class="btn btn-primary" v-on:click="createDeck">create Deck</button>
+					<button class="btn ripple btn-primary" v-on:click="createDeck">create Deck</button>
 				</div>
 			</div>
 		</div>

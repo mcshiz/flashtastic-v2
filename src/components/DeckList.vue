@@ -1,6 +1,4 @@
 <template>
-
-
 	<div class="row">
 		<div class="col">
 			<ul class="list-group">
@@ -53,13 +51,5 @@ export default {
 </script>
 
 <style>
-.deck-list-item {
-	max-width: 320px;
-}
-	.deck-image {
-		width:290px !important;
-		height:182px !important;
-		display: block;
-		overflow: hidden;
-	}
+
 </style>

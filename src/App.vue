@@ -1,7 +1,11 @@
 <template>
-	<div id="app" class="container-fluid">
-		<router-view/>
-		<error-modal/>
+	<div id="app">
+		<div class="wrapper">
+			<div class="main container clear-top">
+				<router-view/>
+				<error-modal/>
+			</div>
+		</div>
 		<nav-bar />
 	</div>
 </template>
@@ -24,31 +28,66 @@ export default {
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
 		color: #2c3e50;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		overflow: auto;
-	}
-	html {
-		height: 100%;
-		box-sizing: border-box;
-	}
-
-	*,
-	*:before,
-	*:after {
-		box-sizing: inherit;
-	}
-
-	body {
 		position: relative;
-		margin: 0;
-		padding-bottom: 6rem;
-		min-height: 100%;
-		font-family: "Helvetica Neue", Arial, sans-serif;
+		height: 100%;
+		overflow-x: hidden;
 	}
-	@import "~bootstrap";
+	.wrapper {
+		min-height: 100%;
+	}
+	.main {
+		overflow:auto;
+		padding-bottom:50px;
+	}
 
+	button.ripple {
+		border: none;
+		cursor: pointer;
+		color: white;
+	}
+
+	/* Ripple magic */
+	button.ripple {
+		position: relative;
+		overflow: hidden;
+	}
+
+	button.ripple:after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 5px;
+		height: 5px;
+		background: rgba(255, 255, 255, .5);
+		opacity: 0;
+		border-radius: 100%;
+		transform: scale(1, 1) translate(-50%);
+		transform-origin: 50% 50%;
+	}
+
+	@keyframes ripple {
+		0% {
+			transform: scale(0, 0);
+			opacity: 1;
+		}
+		20% {
+			transform: scale(25, 25);
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+			transform: scale(40, 40);
+		}
+	}
+
+	button.ripple:focus:not(:active)::after {
+		animation: ripple 1s ease-out;
+	}
+	.content {
+		margin-bottom: 30px;
+	}
+	i.fa {
+		padding: 0 5px;
+	}
 </style>
