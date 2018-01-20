@@ -11,7 +11,7 @@
 						</span>
 						<div class="col-md-1"></div>
 						<div class="col-auto col-md-1 pull-right" >
-							<button class="btn btn-primary" v-on:click="loadQuiz(deck.id)">Study</button>
+							<button class="btn btn-info" v-on:click="loadQuiz(deck.id)">Study</button>
 						</div>
 					</div>
 				</li>
