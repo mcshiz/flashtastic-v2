@@ -68,6 +68,12 @@ body {
 	-o-transform: rotateY(-180deg);
 	transform: rotateY(-180deg);
 }
+.notecard .front, .notecard .back {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
 
 @media screen and (max-width: 768px){
