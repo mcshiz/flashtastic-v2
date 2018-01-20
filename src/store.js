@@ -35,7 +35,6 @@ const store = new Vuex.Store({
 			commit('SET_ERROR_MESSAGE', errorMessage)
 		},
 		RESET_ERROR: ({ commit }) => {
-			console.log('resetttingnggng')
 			commit('SET_ERROR_MESSAGE', '')
 		}
 	},
@@ -81,9 +80,6 @@ const store = new Vuex.Store({
 		}
 	},
 	getters: {
-		showError: state => {
-			return true
-		},
 		selectedDeckLength: state => {
 			return state.selectedDeck.questions.length
 		},
