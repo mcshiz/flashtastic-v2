@@ -1,14 +1,12 @@
 <template>
-	<div class="col-xs-12">
-		<div class="score-box">
+	<div class="row score-box-row">
+		<div class="score-box col-xs-6">
 			<div class="text-center score-box-header">Correct</div>
 			<div class="text-center score-box-value">{{score.correct}}</div>
 		</div>
-		<div class="col-xs-12">
-			<div class="score-box">
-				<div class="text-center score-box-header">Incorrect</div>
-				<div class="text-center score-box-value">{{score.incorrect}}</div>
-			</div>
+		<div class="score-box col-xs-6">
+			<div class="text-center score-box-header">Incorrect</div>
+			<div class="text-center score-box-value">{{score.incorrect}}</div>
 		</div>
 	</div>
 </template>
@@ -41,5 +39,10 @@ export default {
 .score-box {
 	width: 150px;
 	padding: 10px;
+}
+@media screen and (min-width: 768px) {
+	.score-box-row {
+		margin-top: 40%;
+	}
 }
 </style>
