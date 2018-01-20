@@ -2,6 +2,9 @@
 
 > Flashcard game built with Vue.js
 
+> vuex for state management
+> vue router
+
 ## Build Setup
 
 ``` bash
