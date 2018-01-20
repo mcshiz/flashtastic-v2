@@ -1,0 +1,79 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	-webkit-perspective: 800px;
+	-moz-perspective: 800px;
+	perspective: 800px;
+	-webkit-perspective-origin: 50% 50%;
+	-moz-perspective-origin: 50% 50%;
+	perspective-origin: 50% 50%;
+}
+
+.notecard {
+	position: relative;
+	margin: 0 auto;
+	margin-bottom: 30px;
+	height: 300px;
+	width: 100%;
+	background-color: cornsilk;
+	box-shadow: 6px 6px 5px gray;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3em;
+	line-height: 1em;
+	background-image: -webkit-linear-gradient(top, #fff8dc 15%, #F94545 16%, #fff8dc 16%, #fff8dc 25%, #85b2d3 26%, #fff8dc 26%, #fff8dc 35%, #85b2d3 36%, #fff8dc 36%, #fff8dc 45%, #85b2d3 46%, #fff8dc 46%, #fff8dc 55%, #85b2d3 56%, #fff8dc 56%, #fff8dc 65%, #85b2d3 66%, #fff8dc 66%, #fff8dc 75%, #85b2d3 76%, #fff8dc 76%, #fff8dc 85%, #85b2d3 86%, #fff8dc 86%, #fff8dc 95%, #85b2d3 96%, #fff8dc 96%);
+	background-image: linear-gradient(to bottom, #fff8dc 15%, #F94545 16%, #fff8dc 16%, #fff8dc 25%, #85b2d3 26%, #fff8dc 26%, #fff8dc 35%, #85b2d3 36%, #fff8dc 36%, #fff8dc 45%, #85b2d3 46%, #fff8dc 46%, #fff8dc 55%, #85b2d3 56%, #fff8dc 56%, #fff8dc 65%, #85b2d3 66%, #fff8dc 66%, #fff8dc 75%, #85b2d3 76%, #fff8dc 76%, #fff8dc 85%, #85b2d3 86%, #fff8dc 86%, #fff8dc 95%, #85b2d3 96%, #fff8dc 96%);
+	-webkit-transition: 0.6s ease-in;
+	-moz-transition: 0.6s ease-in;
+	transition: 0.6s ease-in;
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	-ms-transform-style: preserve-3d;
+	-o-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+.notecard.flipped {
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	-ms-transform: rotateY(180deg);
+	-o-transform: rotateY(180deg);
+	transform: rotateY(180deg);
+}
+.notecard p {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	background: rgba(255,248,220,0.75);
+}
+.notecard p:first-child {
+}
+.notecard div {
+	position: absolute;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	width: 100%;
+	margin: 0 auto;
+}
+.notecard .front {
+	z-index: 100;
+}
+.notecard .back {
+	z-index: 50;
+	-webkit-transform: rotateY(-180deg);
+	-moz-transform: rotateY(-180deg);
+	-ms-transform: rotateY(-180deg);
+	-o-transform: rotateY(-180deg);
+	transform: rotateY(-180deg);
+}
+
+
+@media screen and (max-width: 768px){
+	.notecard {
+		height: 200px;
+		width: 100%;
+	}
+
+}
