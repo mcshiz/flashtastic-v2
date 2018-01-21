@@ -33,6 +33,7 @@ export default {
 		overflow-x: hidden;
 	}
 	.wrapper {
+		padding-top: 40px;
 		min-height: 100%;
 	}
 	.main {

@@ -7,6 +7,7 @@ import store from './store'
 import 'bootstrap'
 
 Vue.config.productionTip = false
+Vue.config.devtools = true
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',

@@ -1,29 +1,12 @@
 <template>
 		<div class="content">
-			<!-- Modal -->
-			<div class="modal fade" id="nameDeckModal" tabindex="-1" role="dialog"  aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Name your Deck of Notecards</h5>
-						</div>
-						<div class="modal-body">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Deck Name" aria-label="Deck Name" v-model="deckName">
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn ripple btn-primary" v-on:click="saveDeckName">Save changes</button>
-						</div>
-					</div>
-				</div>
-			</div>
+			<nameDeckModal :newDeckName="newDeck.name" :saveDeckName="saveDeckName"></nameDeckModal>
 			<div class="row">
 				<h1 class="col">{{msg}}</h1>
 			</div>
 			<div class="row">
 				<div class="col deck-title-container">
-					<span class="deck-title">{{newDeckName}}</span>
+					<span class="deck-title">{{newDeck.name}}</span>
 					<button class="btn ripple btn-light deck-title-edit-button" data-toggle="modal" data-target="#nameDeckModal">
 						<i class="fa fa-pencil" aria-hidden="true"></i>
 					</button>
@@ -31,23 +14,7 @@
 			</div>
 			<div class="row">
 				<div class="col">
-					<ul class="list-group">
-						<li v-for='(newQuestion, index) in newQuestions' :key='`question-${index}`' class="list-group-item">
-							<div class="row">
-								<span class="col-12 col-md-10 text-left justify-content-center align-self-center">
-									<b class="new-question-label">Question:</b> {{newQuestion.question}}
-									<br/>
-									<b class="new-question-label">Answer:</b> {{newQuestion.answer}}
-								</span>
-								<div class="col-auto col-md-1 pull-right" >
-									<button class="btn ripple btn-primary">Edit</button>
-								</div>
-								<div class="col-auto col-md-1 pull-right">
-									<button class="btn ripple btn-danger">Delete</button>
-								</div>
-							</div>
-						</li>
-					</ul>
+					<newCardsList :cards="newDeck.questions" :deleteCard="deleteCard" :save="saveEdits"></newCardsList>
 				</div>
 			</div>
 			<div class="row new-question-container">
@@ -59,18 +26,22 @@
 						<input type="text" class="form-control" placeholder="Question" aria-label="Question" v-model="newQuestion">
 					</div>
 				</div>
-				<div class="col-12 col-sm-6">
+				<div class="col-12 col-sm-5">
 					<div class="input-group">
 						<input type="text" class="form-control" placeholder="Answer" aria-label="Answer" v-model="newAnswer">
 					</div>
 				</div>
+				<div class="col-xs-12 col-sm-auto">
+					<button class="btn ripple btn-success" v-on:click="saveCard">Save</button>
+				</div>
 			</div>
 			<div class="row">
 				<div class="col text-left">
-				<button class="btn ripple btn-success" v-on:click="saveCard">Save</button>
+					<button class="btn ripple btn-danger" v-on:click="resetNewDeck"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
+					<button class="btn ripple btn-primary" v-on:click="createDeck">Create Deck</button>
 				</div>
-				<div class="col text-right">
-					<button class="btn ripple btn-primary" v-on:click="createDeck">create Deck</button>
+				<div class="col text-left">
+
 				</div>
 			</div>
 		</div>
@@ -78,22 +49,40 @@
 
 <script>
 import NewQuestions from './NewQuestions'
-import { mapState } from 'vuex'
+import NewCardsList from './NewCardsList'
+import NameDeckModal from './NameDeckModal'
 import $ from 'jquery'
+import { mapState } from 'vuex'
 export default {
 	name: 'NewCard',
 	data() {
 		return {
 			msg: 'Create a new quiz deck',
-			deckName: '',
 			newQuestion: '',
-			newAnswer: ''
+			newAnswer: '',
+			editing: false
 		}
 	},
 	computed: {
-		...mapState(['newQuestions', 'newDeckName'])
+		...mapState(['newQuestions', 'newDeck'])
 	},
 	methods: {
+		deleteCard: function(index) {
+			if(window.confirm('Are you sure you want to delete this question?')) {
+				this.$store.dispatch('DELETE_CARD', index)
+			}
+		},
+		saveEdits: function(card) {
+			this.$store.dispatch('SAVE_CARD_EDITS', card)
+			$('#editModal').modal('hide')
+		},
+		resetNewDeck: function() {
+			this.$store.dispatch('RESET_NEW_DECK')
+			$('#nameDeckModal').modal()
+		},
+		saveDeckName: function (name) {
+			this.$store.dispatch('NAME_DECK', name)
+		},
 		saveCard: function() {
 			if(this.newQuestion === '' || this.newAnswer === '') {
 				this.$store.dispatch('SHOW_ERROR', 'Both question and answer must be entered')
@@ -101,30 +90,26 @@ export default {
 			}
 			let newQuestion = {'question': this.newQuestion, 'answer': this.newAnswer}
 			this.$store.dispatch('ADD_NEW_QUESTION', newQuestion)
-		},
-		saveDeckName: function () {
-			if(this.deckName === '') {
-				return false
-			}
-			$('#nameDeckModal').modal('hide')
-			this.$store.dispatch('NAME_DECK', this.deckName)
+			this.newQuestion = ''
+			this.newAnswer = ''
 		},
 		createDeck: function() {
+			if(!this.newDeck.questions.length) {
+				this.$store.dispatch('SHOW_ERROR', 'You must first add questions and answers')
+				return
+			}
 			this.$store.dispatch('CREATE_DECK').then(() => {
 				this.$router.push({path: 'home'})
+				console.log(this.$store.state)
 			})
 		}
 	},
 	components: {
-		'newQuestions': NewQuestions
-	},
-	mounted() {
-		// open modal and prevent dismiss without clicking save button
-		$('#nameDeckModal').modal({
-			keyboard: false,
-			backdrop: 'static'
-		})
+		'newQuestions': NewQuestions,
+		'newCardsList': NewCardsList,
+		'nameDeckModal': NameDeckModal
 	}
+
 }
 </script>
 <style>

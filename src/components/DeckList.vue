@@ -1,8 +1,9 @@
 <template>
-	<div class="row">
+	<div class="row" v-if="Object.keys(decks).length">
+
 		<div class="col">
 			<ul class="list-group">
-				<li v-for='deck in decks' :key='`deck-${deck.id}`' class="list-group-item">
+				<li v-for='(deck, index) in decks' :key='`deck-${index}`' class="list-group-item">
 					<div class="row">
 						<span class="col-12 col-md-10 text-left justify-content-center align-self-center">
 							<b>{{deck.name}}</b>
@@ -11,13 +12,14 @@
 						</span>
 						<div class="col-md-1"></div>
 						<div class="col-auto col-md-1 pull-right" >
-							<button class="btn btn-info" v-on:click="loadQuiz(deck.id)">Study</button>
+							<button class="btn btn-info" v-on:click="loadQuiz(index)">Study</button>
 						</div>
 					</div>
 				</li>
 			</ul>
 		</div>
 	</div>
+	<div v-else>Loading...</div>
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -38,7 +40,9 @@ export default {
 		}
 	},
 	mounted: function () {
-		this.$store.dispatch('LOAD_ALL_DECKS')
+		if(!this.$store.state.decks.length) {
+			this.$store.dispatch('LOAD_ALL_DECKS')
+		}
 	},
 	data() {
 		return {

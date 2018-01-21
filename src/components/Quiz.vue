@@ -1,5 +1,5 @@
 <template>
-<div class="content">
+<div class="content" v-if="selectedDeck.questions">
 	<div class="row">
 		<div class="col">
 			<h1>{{selectedDeck.name}}</h1>
@@ -7,11 +7,11 @@
 	</div>
 	<div class="row">
 		<div class="col-12 col-sm-10 col-md-6">
-			<span>Card {{currentIndex + 1}} of {{selectedDeckLength}}</span>
+			<span>Card {{currentIndex + 1}} of {{selectedDeck.questions.length}}</span>
 			<card :card="selectedDeck.questions[currentIndex]" :showAnswer="showAnswer" :markScore="markScore"></card>
 		</div>
 		<div class="col-12 col-sm-2 col-md-4">
-			<score v-bind:score="{correct: calculatedScore.correct, incorrect: calculatedScore.incorrect} "></score>
+			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect} "></score>
 		</div>
 	</div>
 	<div class="row">
@@ -23,23 +23,24 @@
 		</div>
 	</div>
 </div>
+<div class="loading" v-else>Loading...</div>
 </template>
 <script>
 import Score from './Score'
 import Card from './Card'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
 	name: 'Quiz',
 	methods: {
 		goToNextCard: function() {
 			if(this.currentIndex <= this.selectedDeck.questions.length) {
-				this.currentIndex++
 				this.showAnswer = false
+				this.currentIndex++
 			}
 		},
 		goToPreviousCard: function() {
-			this.currentIndex--
 			this.showAnswer = false
+			this.currentIndex--
 		},
 		flipCard: function() {
 			this.showAnswer = !this.showAnswer
@@ -47,7 +48,8 @@ export default {
 		markScore: function(result) {
 			this.$store.dispatch('MARK_CARD_RESULT', {
 				id: this.currentIndex,
-				result: result})
+				result: result
+			})
 		},
 		reset: function() {
 			this.currentIndex = 0
@@ -63,7 +65,18 @@ export default {
 	},
 	computed: {
 		...mapState(['selectedDeck']),
-		...mapGetters(['selectedDeckLength', 'calculatedScore'])
+		score: function() {
+			let correct = 0
+			let incorrect = 0
+			this.selectedDeck.questions.forEach(card => {
+				console.log(card)
+				card.result === 'correct' && correct++
+				card.result === 'incorrect' && incorrect++
+			})
+			console.log('c', correct)
+			console.log('ic', incorrect)
+			return {'correct': correct, 'incorrect': incorrect}
+		}
 	},
 	props: ['id', 'name', 'deck'],
 	components: {
@@ -71,9 +84,7 @@ export default {
 		'card': Card
 	},
 	created() {
-		if(this.$route.params.id >= 0 && Object.keys(this.$store.state.selectedDeck).length === 0) {
-			this.$store.dispatch('LOAD_DECK_BY_ID', this.$route.params.id)
-		}
+		this.$store.dispatch('LOAD_DECK_BY_ID', this.$route.params.id)
 	}
 }
 </script>
