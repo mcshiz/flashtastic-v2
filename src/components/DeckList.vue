@@ -1,6 +1,5 @@
 <template>
 	<div class="row" v-if="Object.keys(decks).length">
-
 		<div class="col">
 			<ul class="list-group">
 				<li v-for='(deck, index) in decks' :key='`deck-${index}`' class="list-group-item">
@@ -46,7 +45,6 @@ export default {
 	},
 	data() {
 		return {
-			msg: 'Welcome to Your Vue.js App',
 			props: ['id', 'name'],
 			image: '../assets/planets.jpeg'
 		}
