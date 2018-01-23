@@ -11,7 +11,7 @@
 			<card :card="selectedDeck.questions[currentIndex]" :showAnswer="showAnswer" :markScore="markScore"></card>
 		</div>
 		<div class="col-12 col-sm-2 col-md-4">
-			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect} "></score>
+			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}"></score>
 		</div>
 	</div>
 	<div class="row">
