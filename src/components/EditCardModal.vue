@@ -16,8 +16,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn ripple btn-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
-					<button type="button" class="btn ripple btn-primary" v-on:click="save({index: index, card: editingCard})">Save changes</button>
+					<button type="button" class="btn ripple btn-secondary cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+					<button type="button" class="btn ripple btn-primary save" v-on:click="save({index: index, card: editingCard})">Save changes</button>
 				</div>
 			</div>
 		</div>
