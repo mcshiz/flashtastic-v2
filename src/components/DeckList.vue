@@ -28,13 +28,10 @@ export default {
 		...mapState(['decks'])
 	},
 	methods: {
-		urlEncodeName: (name) => {
-			return name.replace(/\s/g, '-').toLowerCase()
-		},
 		loadQuiz: function(id) {
 			this.$store.dispatch('LOAD_DECK_BY_ID', id).then((data) => {
-				const selectedDeckName = this.urlEncodeName(this.$store.state.selectedDeck.name)
-				this.$router.push(`/quiz/${id}/${selectedDeckName}`)
+				const selectedDeckName = encodeURI(this.$store.state.selectedDeck.name.replace(/\s/g, '-').toLowerCase())
+				this.$router.push({name: 'Quiz', params: {id: id, name: selectedDeckName}})
 			})
 		}
 	},
@@ -45,8 +42,7 @@ export default {
 	},
 	data() {
 		return {
-			props: ['id', 'name'],
-			image: '../assets/planets.jpeg'
+			props: ['id', 'name']
 		}
 	}
 }
