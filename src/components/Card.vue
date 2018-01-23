@@ -1,6 +1,6 @@
 <template>
 	<div class='quiz-card-container'>
-		<div class="notecard"  v-bind:class="{ flipped: showAnswer}">
+		<div class="notecard"  v-bind:class="{ flipped: showAnswer }">
 			<div class="front">
 				<div class="score-buttons">
 					<button class="btn ripple btn-success score correct" v-on:click="markScore('correct')" :disabled="card.result === 'correct'"><i class="fa fa-check" aria-hidden="true"></i></button>
