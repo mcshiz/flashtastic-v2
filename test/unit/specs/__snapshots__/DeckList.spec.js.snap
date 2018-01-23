@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Items.vue Matches its snapshot 1`] = `
+<div>
+  <div
+    class="row"
+  >
+    <div
+      class="col"
+    >
+      <ul
+        class="list-group"
+      >
+        <li
+          class="list-group-item"
+        >
+          <div
+            class="row"
+          >
+            <span
+              class="col-12 col-md-10 text-left justify-content-center align-self-center"
+            >
+              <b>
+                Planets of the apes
+              </b>
+               
+              <br />
+              
+						5 Cards
+					
+            </span>
+             
+            <div
+              class="col-md-1"
+            />
+             
+            <div
+              class="col-auto col-md-1 pull-right"
+            >
+              <button
+                class="btn btn-info"
+              >
+                Study
+              </button>
+            </div>
+          </div>
+        </li>
+        <li
+          class="list-group-item"
+        >
+          <div
+            class="row"
+          >
+            <span
+              class="col-12 col-md-10 text-left justify-content-center align-self-center"
+            >
+              <b>
+                Chemistry
+              </b>
+               
+              <br />
+              
+						5 Cards
+					
+            </span>
+             
+            <div
+              class="col-md-1"
+            />
+             
+            <div
+              class="col-auto col-md-1 pull-right"
+            >
+              <button
+                class="btn btn-info"
+              >
+                Study
+              </button>
+            </div>
+          </div>
+        </li>
+        <li
+          class="list-group-item"
+        >
+          <div
+            class="row"
+          >
+            <span
+              class="col-12 col-md-10 text-left justify-content-center align-self-center"
+            >
+              <b>
+                Trees
+              </b>
+               
+              <br />
+              
+						5 Cards
+					
+            </span>
+             
+            <div
+              class="col-md-1"
+            />
+             
+            <div
+              class="col-auto col-md-1 pull-right"
+            >
+              <button
+                class="btn btn-info"
+              >
+                Study
+              </button>
+            </div>
+          </div>
+        </li>
+        <li
+          class="list-group-item"
+        >
+          <div
+            class="row"
+          >
+            <span
+              class="col-12 col-md-10 text-left justify-content-center align-self-center"
+            >
+              <b>
+                firebase
+              </b>
+               
+              <br />
+              
+						2 Cards
+					
+            </span>
+             
+            <div
+              class="col-md-1"
+            />
+             
+            <div
+              class="col-auto col-md-1 pull-right"
+            >
+              <button
+                class="btn btn-info"
+              >
+                Study
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;
