@@ -7,11 +7,11 @@
 				</div>
 				<div class="modal-body">
 					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Deck Name" aria-label="Deck Name" v-model="deckName">
+						<input type="text" class="form-control new-deck-name" placeholder="Deck Name" aria-label="Deck Name" v-model="deckName" >
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn ripple btn-primary" v-on:click="save">Save changes</button>
+					<button type="button" class="btn ripple btn-primary save" v-on:click="save">Save changes</button>
 				</div>
 			</div>
 		</div>
@@ -29,22 +29,25 @@ export default {
 	},
 	methods: {
 		save: function () {
-			if(this.deckName === '') {
+			if (this.deckName === '') {
 				return false
 			}
 			$('#nameDeckModal').modal('hide')
 			this.saveDeckName(this.deckName)
-			this.deckName = ''
-		}
-	},
-	mounted() {
-		// open modal and prevent dismiss without clicking save button
-		if(!this.newDeckName) {
+		},
+		openModal: function() {
 			$('#nameDeckModal').modal({
 				keyboard: false,
 				backdrop: 'static'
 			})
 		}
+	},
+	mounted() {
+		// open modal and prevent dismiss without clicking save button
+		if(this.newDeckName === '') {
+			this.openModal()
+		}
+		this.deckName = this.newDeckName.slice(0)
 	}
 }
 </script>

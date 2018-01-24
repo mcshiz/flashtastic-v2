@@ -5,6 +5,7 @@ import 'bootstrap'
 describe('NameDeckModal.vue', () => {
 	let vm
 	beforeEach(() => {
+		jest.clearAllMocks()
 		const Constructor = Vue.extend(NameDeckModal)
 		vm = new Constructor({
 			propsData: {
@@ -58,7 +59,7 @@ describe('NameDeckModal.vue', () => {
 	})
 	it('to open modal if newDeckName is not present', (done) => {
 		const Constructor = Vue.extend(NameDeckModal)
-		let newVm = new Constructor({
+		let vm = new Constructor({
 			propsData: {
 				newDeckName: '',
 				saveDeckName: jest.fn()
@@ -69,23 +70,25 @@ describe('NameDeckModal.vue', () => {
 		}).$mount()
 		Vue.nextTick()
 			.then(() => {
-				expect(newVm.openModal).toHaveBeenCalled()
+				expect(vm.$options.methods.openModal).toHaveBeenCalled()
 				done()
 			})
 			.catch(done)
 	})
 	it('to not open modal if newDeckName is present', (done) => {
 		const Constructor = Vue.extend(NameDeckModal)
-		let newer = new Constructor({
+		let vm = new Constructor({
 			propsData: {
-				newDeckName: 'asd',
+				newDeckName: 'presesnt',
 				saveDeckName: jest.fn()
+			},
+			methods: {
+				openModal: jest.fn()
 			}
 		}).$mount()
 		Vue.nextTick()
 			.then(() => {
-				jest.spyOn(newer, 'openModal')
-				expect(newer.openModal).toHaveBeenCalledTimes(0)
+				expect(vm.$options.methods.openModal).not.toHaveBeenCalled()
 				done()
 			})
 			.catch(done)
