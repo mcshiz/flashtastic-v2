@@ -11,6 +11,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button type="button" class="btn ripple btn-secondary" v-on:click="cancel" >Cancel</button>
 					<button type="button" class="btn ripple btn-primary save" v-on:click="save">Save changes</button>
 				</div>
 			</div>
@@ -40,6 +41,10 @@ export default {
 				keyboard: false,
 				backdrop: 'static'
 			})
+		},
+		cancel: function() {
+			$('#nameDeckModal').modal('hide')
+			this.$router.push({name: 'Home'})
 		}
 	},
 	mounted() {
