@@ -1,5 +1,5 @@
 <template>
-<div class="content" v-if="selectedDeck.questions">
+<div class="content" v-if="selectedDeck">
 	<div class="row">
 		<div class="col">
 			<h1>{{selectedDeck.name}}</h1>
@@ -11,7 +11,7 @@
 			<card :card="selectedDeck.questions[currentIndex]" :showAnswer="showAnswer" :markScore="markScore"></card>
 		</div>
 		<div class="col-12 col-sm-2 col-md-4">
-			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}"></score>
+			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}" :lastScore="selectedDeck.score"></score>
 		</div>
 	</div>
 	<div class="row">
@@ -69,12 +69,9 @@ export default {
 			let correct = 0
 			let incorrect = 0
 			this.selectedDeck.questions.forEach(card => {
-				console.log(card)
 				card.result === 'correct' && correct++
 				card.result === 'incorrect' && incorrect++
 			})
-			console.log('c', correct)
-			console.log('ic', incorrect)
 			return {'correct': correct, 'incorrect': incorrect}
 		}
 	},
@@ -83,8 +80,13 @@ export default {
 		'score': Score,
 		'card': Card
 	},
-	created() {
-		this.$store.dispatch('LOAD_DECK_BY_ID', this.$route.params.id)
+	watch: {
+		score: function() {
+			// when they've scored every card save the score
+			if(this.score.correct + this.score.incorrect === this.selectedDeck.questions.length) {
+				this.$store.dispatch('SAVE_SCORE', this.score)
+			}
+		}
 	}
 }
 </script>

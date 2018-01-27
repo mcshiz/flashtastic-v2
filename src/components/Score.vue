@@ -8,12 +8,24 @@
 			<div class="text-center score-box-header">Incorrect</div>
 			<div class="text-center score-box-value incorrect">{{score.incorrect}}</div>
 		</div>
+		<div class="row" v-if="prevScore">
+			Previous Score {{prevScore}}
+		</div>
 	</div>
 </template>
 <script>
 export default {
 	name: 'Quiz',
-	props: ['score']
+	props: ['score', 'lastScore'],
+	computed: {
+		prevScore: function() {
+			if(this.lastScore) {
+				return `${Math.floor((this.lastScore.correct / (this.lastScore.correct + this.lastScore.incorrect)) * 100).toFixed(0)}%`
+			} else {
+				return false
+			}
+		}
+	}
 }
 </script>
 <style scoped>
