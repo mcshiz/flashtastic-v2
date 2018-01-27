@@ -19,26 +19,28 @@ export default new Vuex.Store({
 	},
 	actions: {
 		INITIALIZE: ({commit, dispatch, state}) => {
-			let user
-			let authd
-			Firebase.auth()
-			Firebase.auth().onAuthStateChanged((result) => {
-				if(result !== null && result.uid) {
-					console.log(result)
-					authd = true
-					user = {
-						displayName: result.displayName,
-						email: result.email,
-						photoURL: result.photoURL,
-						deckRef: `users/${result.uid}/decks`
+			return new Promise((resolve, reject) => {
+				let user
+				let authd
+				Firebase.auth().onAuthStateChanged((result) => {
+					if (result !== null && result.uid) {
+						authd = true
+						user = {
+							displayName: result.displayName,
+							email: result.email,
+							photoURL: result.photoURL,
+							deckRef: `users/${result.uid}/decks`,
+							scoreRef: `users/${result.uid}/scores`
+						}
+					} else {
+						user = {}
+						authd = false
 					}
-				} else {
-					user = {}
-					authd = false
-				}
-				commit('SET_AUTHENTICATED', {authd, user})
-				dispatch('LOAD_MY_DECKS')
-				dispatch('LOAD_PUBLIC_DECKS')
+					commit('SET_AUTHENTICATED', {authd, user})
+					dispatch('LOAD_MY_DECKS')
+					dispatch('LOAD_PUBLIC_DECKS')
+					resolve()
+				})
 			})
 		},
 		SIGN_IN: ({ commit, dispatch }) => {
@@ -60,34 +62,98 @@ export default new Vuex.Store({
 			if(state.authenticated) {
 				decksRef = fire.database().ref(state.user.deckRef).orderByKey().limitToLast(100)
 				decksRef.on('value', snapshot => {
-					commit('SET_MY_DECKS', {decks: snapshot.val()})
+					let decks = snapshot.val()
+					for(let key in decks) {
+						decks[key].deckPermissions = 'private'
+						decks[key].key = key
+					}
+					if(state.authenticated) {
+						let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
+						scoresRef.on('value', snapshot => {
+							for(let key in snapshot.val()) {
+								if(decks[key]) {
+									decks[key].score = snapshot.val()[key]
+								}
+							}
+							commit('SET_MY_DECKS', {decks: decks})
+						})
+					} else {
+						commit('SET_MY_DECKS', {decks: decks})
+					}
 				})
 			}
 		},
 		LOAD_PUBLIC_DECKS: ({ commit, state }) => {
 			let decksRef = fire.database().ref('decks/').orderByKey().limitToLast(100)
 			decksRef.on('value', snapshot => {
-				commit('SET_PUBLIC_DECKS', {decks: snapshot.val()})
+				let decks = snapshot.val()
+				for(let key in decks) {
+					decks[key].deckPermissions = 'public'
+					decks[key].key = key
+				}
+				if(state.authenticated) {
+					let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
+					scoresRef.on('value', snapshot => {
+						for(let key in snapshot.val()) {
+							if(decks[key]) {
+								decks[key].score = snapshot.val()[key]
+							}
+						}
+						commit('SET_PUBLIC_DECKS', {decks: decks})
+					})
+				} else {
+					commit('SET_PUBLIC_DECKS', {decks: decks})
+				}
 			})
 		},
-		LOAD_DECK_BY_ID: ({ commit, state }, id) => {
-			let decksRef = fire.database().ref(`${state.user.deckRef}/${id}`)
+		LOAD_DECK_BY_ID: ({ commit, state }, {id, deckPermissions}) => {
+			let decksRef
+			if(deckPermissions === 'private') {
+				decksRef = fire.database().ref(`${state.user.deckRef}/${id}`)
+			} else {
+				decksRef = fire.database().ref(`decks/${id}`)
+			}
 			return new Promise((resolve, reject) => {
 				decksRef.on('value', snapshot => {
-					commit('SET_SELECTED_DECK', {deck: snapshot.val()})
-					resolve()
+					let id = snapshot.key
+					let deck = {
+						...snapshot.val(),
+						key: id
+					}
+					if(state.authenticated) {
+						let scoresRef = fire.database().ref(`${state.user.scoreRef}/${id}`)
+						scoresRef.on('value', snapshot => {
+							deck.score = snapshot.val()
+							commit('SET_SELECTED_DECK', {deck: deck})
+							resolve()
+						})
+					} else {
+						commit('SET_SELECTED_DECK', {deck: deck})
+						resolve()
+					}
 				})
 			})
 		},
 		DELETE_DECK_BY_ID: ({ commit, state }, id) => {
 			try {
 				fire.database().ref(`${state.user.deckRef}/${id}`).remove()
+				fire.database().ref(`${state.user.scoreRef}/${id}`).remove()
 			} catch(e) {
 				console.log(e)
 			}
 		},
 		MARK_CARD_RESULT: ({ commit }, {id, result}) => {
 			commit('SET_CARD_RESULT', {id, result})
+		},
+		SAVE_SCORE: ({ commit, state, dispatch }, score) => {
+			let selectedDeckKey = state.selectedDeck.key
+			fire.database().ref(`${state.user.scoreRef}/${selectedDeckKey}`).set({
+				correct: score.correct,
+				incorrect: score.incorrect
+			})
+				.catch(error => {
+					commit('SET_ERROR_MESSAGE', error)
+				})
 		},
 		RESET_RESULTS: ({ commit }) => {
 			commit('RESET_RESULTS')

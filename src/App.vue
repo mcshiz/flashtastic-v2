@@ -14,9 +14,6 @@ import Navigation from './components/Navigation'
 import ErrorModal from './components/ErrorModal'
 export default {
 	name: 'App',
-	beforeMount() {
-		this.$store.dispatch('INITIALIZE')
-	},
 	components: {
 		'error-modal': ErrorModal,
 		'nav-bar': Navigation
