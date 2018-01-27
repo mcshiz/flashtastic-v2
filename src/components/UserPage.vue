@@ -1,17 +1,17 @@
 <template v-if="authenticated">
 	<div class="content">
 		<div class="row">
-			<h2 class="text=center">
-				{{user.displayName}}
-			</h2>
+			<div class="col-8 col-sm-10 text-left">
+				<h2 class="text=center">
+					{{user.displayName}}
+				</h2>
+			</div>
+			<div class="col-4 col-sm-2 text-right">
+				<button v-if="authenticated" v-on:click="authenticate" class="btn btn-primary ripple">Sign Out</button>
+				<button v-else v-on:click="signOut" class="btn btn-primary ripple">Sign In With Google</button>
+			</div>
 		</div>
-		<div class="row">
-			<button v-if="authenticated" v-on:click="authenticate" class="btn btn-primary ripple">Sign Out</button>
-			<button v-else v-on:click="signOut" class="btn btn-primary ripple">Sign In With Google</button>
-		</div>
-		<div class="row">
-			<my-deck-list :decks="myDecks"></my-deck-list>
-		</div>
+		<my-deck-list :decks="myDecks"></my-deck-list>
 	</div>
 </template>
 
