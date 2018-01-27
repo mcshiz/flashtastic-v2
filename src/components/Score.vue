@@ -17,6 +17,9 @@ export default {
 }
 </script>
 <style scoped>
+	.score-box-row {
+		justify-content: center;
+	}
 .score-box-header, .score-box-value {
 	font-size: 2em;
 	line-height: 1em;
