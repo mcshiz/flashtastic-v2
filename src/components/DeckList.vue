@@ -4,16 +4,23 @@
 			<ul class="list-group">
 				<li v-for='(deck, index) in decks' :key='`deck-${index}`' class="list-group-item">
 					<div class="row">
-						<span class="col-6 col-sm-8 col-md-10 text-left justify-content-center align-self-center">
+						<div class="col-6 col-sm-8 col-md-10 text-left justify-content-center align-self-center">
 							<b>{{deck.name}}</b>
 							<br>
-							{{deck.questions.length}} Cards
-						</span>
-						<div class="col-4 col-sm-2 col-md-1 pull-right" >
-							<button class="btn btn-info" v-on:click="loadQuiz(index)">Study</button>
+							{{deck.questions.length}} Cards in Deck
+							<br>
+							<span v-if="deck.score"
+									v-bind:class="{'text-success': deck.score.correct/deck.questions.length > 0.5,
+													'text-danger': deck.score.correct/deck.questions.length <= 0.5}">
+								Score:<b>{{deck.score.correct}}</b>/<b>{{deck.questions.length}}</b>
+							</span>
+							<span v-else>Not Completed</span>
 						</div>
-						<div class="col-2 col-sm-2 col-md-1">
-							<span class="delete-deck" v-on:click="deleteDeck(index)"><i class="fa fa-trash"></i></span>
+						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
+							<button class="btn btn-info" v-on:click="loadQuiz(deck)">Study</button>
+						</div>
+						<div class="col-2 col-sm-2 col-md-1 align-self-center">
+							<span v-if="deck.deckPermissions === 'private'"  v-on:click="deleteDeck(index)" class="delete-deck"><i class="fa fa-trash"></i></span>
 						</div>
 					</div>
 				</li>
@@ -27,11 +34,8 @@ export default {
 	name: 'DeckList',
 	props: ['decks'],
 	methods: {
-		loadQuiz: function(id) {
-			this.$store.dispatch('LOAD_DECK_BY_ID', id).then((data) => {
-				const selectedDeckName = encodeURI(this.$store.state.selectedDeck.name.replace(/\s/g, '-').toLowerCase())
-				this.$router.push({name: 'Quiz', params: {id: id, name: selectedDeckName}})
-			})
+		loadQuiz: function(deck) {
+			this.$router.push({name: 'Quiz', params: {id: deck.key, name: deck.name, deckPermissions: deck.deckPermissions}})
 		},
 		deleteDeck: function(id) {
 			if(window.confirm('Are you sure you want to delete this deck?')) {
