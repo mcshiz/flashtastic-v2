@@ -14,6 +14,18 @@
 			</div>
 			<div class="row">
 				<div class="col">
+					<input type="text" class="form-control tags" placeholder="Chemistry, Nursing" id="deck-tags">
+					<small id="tagsHelp" class="form-text text-muted text-left">Tag this deck for easier finding later</small>
+				</div>
+				<div class="col">
+					<select name="deckPermissions" id="deckPermissions" v-model="deckPermissions" v-on:change="saveDeckPermissions">
+						<option value="private">Private - Only I can play this deck</option>
+						<option value="public">Public - Let everyone pay this deck</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
 					<newCardsList :cards="newDeck.questions" :deleteCard="deleteCard" :save="saveEdits"></newCardsList>
 				</div>
 			</div>
@@ -60,6 +72,7 @@ export default {
 			msg: 'Create a new quiz deck',
 			newQuestion: '',
 			newAnswer: '',
+			deckPermissions: 'private',
 			editing: false
 		}
 	},
@@ -77,6 +90,9 @@ export default {
 			$('#editModal').modal('hide')
 		},
 		resetNewDeck: function() {
+			this.newQuestion = ''
+			this.newAnswer = ''
+			this.deckPermissions = 'private'
 			this.$store.dispatch('RESET_NEW_DECK')
 			$('#nameDeckModal').modal()
 		},
@@ -93,6 +109,9 @@ export default {
 			this.newQuestion = ''
 			this.newAnswer = ''
 		},
+		saveDeckPermissions: function() {
+			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', this.deckPermissions)
+		},
 		createDeck: function() {
 			if(!this.newDeck.questions.length) {
 				this.$store.dispatch('SHOW_ERROR', 'You must first add questions and answers')
@@ -100,7 +119,6 @@ export default {
 			}
 			this.$store.dispatch('CREATE_DECK').then(() => {
 				this.$router.push({path: 'home'})
-				console.log(this.$store.state)
 			})
 		}
 	},
