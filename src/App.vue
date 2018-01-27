@@ -1,6 +1,5 @@
 <template>
 	<div id="app">
-		<user-info />
 		<div class="wrapper">
 			<div class="main container clear-top">
 				<router-view/>
@@ -13,13 +12,14 @@
 <script>
 import Navigation from './components/Navigation'
 import ErrorModal from './components/ErrorModal'
-import UserMenu from './components/UserMenu'
 export default {
 	name: 'App',
+	beforeMount() {
+		this.$store.dispatch('INITIALIZE')
+	},
 	components: {
 		'error-modal': ErrorModal,
-		'nav-bar': Navigation,
-		'user-info': UserMenu
+		'nav-bar': Navigation
 	}
 }
 </script>
