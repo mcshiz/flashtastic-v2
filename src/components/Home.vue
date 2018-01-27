@@ -1,11 +1,21 @@
 <template>
 	<div class='content'>
-		<h1>FlashTastic</h1>
-		<h2>My Decks</h2>
-		<my-deck-list :decks="myDecks"></my-deck-list>
-		<hr>
-		<h2>Public Decks</h2>
-		<public-deck-list :decks="publicDecks"></public-deck-list>
+		<div class="row">
+			<div class="col">
+				<h1>FlashTastic</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<h2>My Decks</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12"><my-deck-list :decks="myDecks"></my-deck-list></div>
+			<div class="col-12"><hr></div>
+			<div class="col-12"><h2>Public Decks</h2></div>
+			<div class="col-12"><public-deck-list :decks="publicDecks"></public-deck-list></div>
+		</div>
 	</div>
 </template>
 <script>
