@@ -1,19 +1,24 @@
 <template>
 	<footer class="row footer">
-		<div class="col-5 text-right">
-			<router-link :to="{ name: 'Home' }">
-				<button class="btn btn-primary ripple">Home</button>
+		<div class="col">
+			<router-link :to="{ name: 'UserPage' }">
+				<button class="btn btn-primary ripple"><i class="fa fa-user" aria-hidden="true"></i></button>
 			</router-link>
 		</div>
-		<div class="col-2"></div>
-		<div class="col-5 text-left">
+		<div class="col">
 			<router-link :to="{ name: 'CreateNew' }">
-				<button class="btn btn-primary ripple">Create New Deck</button>
+				<button class="btn btn-success ripple"><i class="fa fa-plus" aria-hidden="true"></i></button>
+			</router-link>
+		</div>
+		<div class="col">
+			<router-link :to="{ name: 'Home' }">
+				<button class="btn btn-primary ripple"><i class="fa fa-list" aria-hidden="true"></i></button>
 			</router-link>
 		</div>
 	</footer>
 </template>
 <script>
+import UserMenu from './UserMenu'
 export default {
 	name: 'Navigation',
 	data() {
@@ -23,26 +28,12 @@ export default {
 		navigate(path) {
 			this.$router.push(path)
 		}
+	},
+	components: {
+		'UserMenu': UserMenu
 	}
 }
 </script>
-<style scoped>
-
-	.footer {
-		height: 50px;
-		background: coral;
-		-webkit-box-shadow: 0px -5px 15px -2px rgba(155,155,155,0.75);
-		-moz-box-shadow: 0px -5px 15px -2px rgba(155,155,155,155.75);
-		box-shadow: 0px -5px 15px -2px rgba(155,155,155,155.75);
-		position: relative;
-		margin-top: -50px; /* negative value of footer height */
-		clear:both;
-	}
-	.footer button {
-		padding: 10px 50px;
-		display: inline-block;
-		text-align: center;
-		height: 40px;
-		margin-top: 5px;
-	}
+<style scoped lang="scss">
+	@import '../styles/navigation.css';
 </style>

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Quiz from '@/components/Quiz'
 import CreateNew from '@/components/CreateNew'
+import UserPage from '@/components/UserPage'
 
 Vue.use(Router)
 export default new Router({
@@ -22,6 +23,11 @@ export default new Router({
 			path: '/create-new',
 			name: 'CreateNew',
 			component: CreateNew
+		},
+		{
+			path: '/profile',
+			name: 'UserPage',
+			component: UserPage
 		},
 		{
 			path: '*',

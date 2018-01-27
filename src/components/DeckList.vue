@@ -9,9 +9,11 @@
 							<br>
 							{{deck.questions.length}} Cards
 						</span>
-						<div class="col-md-1"></div>
 						<div class="col-auto col-md-1 pull-right" >
 							<button class="btn btn-info" v-on:click="loadQuiz(index)">Study</button>
+						</div>
+						<div class="col-md-1">
+							<span class="delete-deck" v-on:click="deleteDecK(index)"><i class="fa fa-trash"></i></span>
 						</div>
 					</div>
 				</li>
@@ -21,33 +23,28 @@
 	<div v-else>Loading...</div>
 </template>
 <script>
-import { mapState } from 'vuex'
 export default {
 	name: 'DeckList',
-	computed: {
-		...mapState(['decks'])
-	},
+	props: ['decks'],
 	methods: {
 		loadQuiz: function(id) {
 			this.$store.dispatch('LOAD_DECK_BY_ID', id).then((data) => {
+				console.log(this.$store.state.selectedDeck[0])
 				const selectedDeckName = encodeURI(this.$store.state.selectedDeck.name.replace(/\s/g, '-').toLowerCase())
 				this.$router.push({name: 'Quiz', params: {id: id, name: selectedDeckName}})
 			})
-		}
-	},
-	mounted: function () {
-		if(!this.$store.state.decks.length) {
-			this.$store.dispatch('LOAD_ALL_DECKS')
-		}
-	},
-	data() {
-		return {
-			props: ['id', 'name']
+		},
+		deleteDecK: function(id) {
+			this.$store.dispatch('DELETE_DECK_BY_ID', id).then((data) => {
+				console.log(this.$store.state.myDecks)
+			})
 		}
 	}
 }
 </script>
 
 <style>
-
+	.delete-deck {
+		line-height: 48px;
+	}
 </style>
