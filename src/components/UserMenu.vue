@@ -2,7 +2,6 @@
 		<button class="btn btn-info ripple">
 			<i class="fa fa-user" aria-hidden="true"></i>
 		</button>
-
 </template>
 <script>
 import { mapState } from 'vuex'
