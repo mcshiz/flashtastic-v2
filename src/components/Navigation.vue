@@ -5,11 +5,7 @@
 				<button class="btn btn-primary ripple"><i class="fa fa-user" aria-hidden="true"></i></button>
 			</router-link>
 		</div>
-		<div class="col">
-			<router-link :to="{ name: 'CreateNew' }">
-				<button class="btn btn-success ripple"><i class="fa fa-plus" aria-hidden="true"></i></button>
-			</router-link>
-		</div>
+		<create-new-deck-button></create-new-deck-button>
 		<div class="col">
 			<router-link :to="{ name: 'Home' }">
 				<button class="btn btn-primary ripple"><i class="fa fa-list" aria-hidden="true"></i></button>
@@ -19,6 +15,7 @@
 </template>
 <script>
 import UserMenu from './UserMenu'
+import CreateNewDeckButton from './CreateNewDeckButton'
 export default {
 	name: 'Navigation',
 	data() {
@@ -30,6 +27,7 @@ export default {
 		}
 	},
 	components: {
+		'create-new-deck-button': CreateNewDeckButton,
 		'UserMenu': UserMenu
 	}
 }
