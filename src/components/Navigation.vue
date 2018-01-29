@@ -5,7 +5,9 @@
 				<button class="btn btn-primary ripple"><i class="fa fa-user" aria-hidden="true"></i></button>
 			</router-link>
 		</div>
-		<create-new-deck-button></create-new-deck-button>
+		<div class="col">
+			<create-new-deck-button></create-new-deck-button>
+		</div>
 		<div class="col">
 			<router-link :to="{ name: 'Home' }">
 				<button class="btn btn-primary ripple"><i class="fa fa-list" aria-hidden="true"></i></button>
