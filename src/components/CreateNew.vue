@@ -34,30 +34,10 @@
 					<h4 class="text-left">Add a new question</h4>
 				</div>
 				<div class="col-12 col-sm-5 text-left">
-					<div v-bind:class="{'input-group' : newQuestionType === 'text'}">
-						<span v-if="questionImageLoading">Loading...</span>
-						<img v-if="newQuestionType === 'image'"  :src="newQuestion" alt="" height="200" width="200">
-						<input v-else type="text" class="form-control" placeholder="Question" aria-label="Question" v-model="newQuestion">
-						<div class="input-group-append">
-							<button class="btn btn-secondary" type="button" v-on:click="useQuestionImage" tabindex="-1"><i class="fa fa-camera"></i></button>
-						</div>
-						<div style="height:0;overflow:hidden;display:none">
-							<input type="file" id="QuestionFileInput" name="fileInput" v-on:change="uploadQuestionImage"/>
-						</div>
-					</div>
+					<new-question-answer-fields :field="'questionImage'" :type="newQuestionType" :loading="questionImageLoading" v-model="newQuestion" :upload="uploadImage"></new-question-answer-fields>
 				</div>
 				<div class="col-12 col-sm-5">
-					<div class="input-group">
-						<span v-if="answerImageLoading">Loading...</span>
-						<img v-if="newAnswerType === 'image'"  :src="newAnswer" alt="" height="200" width="200">
-						<input v-else type="text" class="form-control" placeholder="Answer" aria-label="Answer" v-model="newAnswer">
-						<span v-bind:class="{'input-group-append' : newAnswerType === 'text'}" >
-							<button class="btn btn-secondary" type="button" v-on:click="useAnswerImage" tabindex="-1`"><i class="fa fa-camera"></i></button>
-						</span>
-						<div style="height:0;overflow:hidden;display:none">
-							<input type="file" id="AnswerFileInput" name="fileInput" v-on:change="uploadAnswerImage"/>
-						</div>
-					</div>
+					<new-question-answer-fields :field="'answerImage'" :type="newAnswerType" :loading="answerImageLoading" v-model="newAnswer" :upload="uploadImage"></new-question-answer-fields>
 				</div>
 				<div class="col-12 col-sm-2">
 					<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
@@ -78,6 +58,7 @@ import NewCardsList from './NewCardsList'
 import NameDeckModal from './NameDeckModal'
 import $ from 'jquery'
 import { mapState } from 'vuex'
+import NewQuestionAnswerFields from "./NewQuestionAnswerFields";
 export default {
 	name: 'NewCard',
 	data() {
@@ -95,7 +76,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(['newDeck'])
+		...mapState(['newDeck', 'authenticated'])
 	},
 	beforeRouteLeave(to, from, next) {
 		if(!this.created) {
@@ -170,40 +151,36 @@ export default {
 				this.$router.push({path: 'home'})
 			})
 		},
-		useQuestionImage: function() {
-			document.getElementById('QuestionFileInput').click()
-		},
-		useAnswerImage: function() {
-			document.getElementById('AnswerFileInput').click()
-		},
-		uploadQuestionImage: function(e) {
+		uploadImage: function(e, field) {
+			console.log(field)
 			let file = e.target.files[0]
 			let reader = new FileReader()
-			this.newQuestionType = 'image'
+			if(field === 'questionImage') {
+				this.newQuestionType = 'image'
+				this.questionImageLoading = true
+			} else if (field === 'answerImage') {
+				this.newAnswerType = 'image'
+				this.answerImageLoading = true
+			} else {
+				console.log('Image Field Not Specified')
+				return false
+			}
 			file.src = reader.result
-			this.questionImageLoading = true
 			this.$store.dispatch('UPLOAD_IMAGE', file).then(response => {
-				this.newQuestion = response.downloadURL
-				this.questionImageLoading = false
-			}).catch(error => [
-				console.log('err', error)
-			])
-		},
-		uploadAnswerImage: function(e) {
-			let file = e.target.files[0]
-			let reader = new FileReader()
-			this.newAnswerType = 'image'
-			file.src = reader.result
-			this.answerImageLoading = true
-			this.$store.dispatch('UPLOAD_IMAGE', file).then(response => {
-				this.newAnswer = response.downloadURL
-				this.answerImageLoading = false
+				if(field === 'questionImage') {
+					this.newQuestion = response.downloadURL
+					this.questionImageLoading = false
+				} else {
+					this.newAnswer = response.downloadURL
+					this.answerImageLoading = false
+				}
 			}).catch(error => [
 				console.log('err', error)
 			])
 		}
 	},
 	components: {
+		NewQuestionAnswerFields,
 		'newCardsList': NewCardsList,
 		'nameDeckModal': NameDeckModal
 	}
