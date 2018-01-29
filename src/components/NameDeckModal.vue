@@ -44,7 +44,6 @@ export default {
 		},
 		cancel: function() {
 			$('#nameDeckModal').modal('hide')
-			this.$router.push({name: 'Home'})
 		}
 	},
 	mounted() {

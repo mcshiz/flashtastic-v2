@@ -11,6 +11,7 @@ export default new Vuex.Store({
 		publicDecks: {},
 		selectedDeck: {},
 		newDeck: {
+			key: '',
 			name: '',
 			questions: [],
 			deckPermissions: 'private'
@@ -30,7 +31,8 @@ export default new Vuex.Store({
 							email: result.email,
 							photoURL: result.photoURL,
 							deckRef: `users/${result.uid}/decks`,
-							scoreRef: `users/${result.uid}/scores`
+							scoreRef: `users/${result.uid}/scores`,
+							storageRef: `users/${result.uid}/images`
 						}
 					} else {
 						user = {}
@@ -53,6 +55,7 @@ export default new Vuex.Store({
 		},
 		SIGN_OUT: ({ commit }) => {
 			Firebase.auth().signOut().then(function() {
+				commit('SIGN_OUT_USER')
 			}, function(error) {
 				commit('SET_ERROR_MESSAGE', error)
 			})
@@ -65,9 +68,8 @@ export default new Vuex.Store({
 					let decks = snapshot.val()
 					for(let key in decks) {
 						decks[key].deckPermissions = 'private'
-						decks[key].key = key
 					}
-					if(state.authenticated) {
+					if(state.authenticated && decks) {
 						let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
 						scoresRef.on('value', snapshot => {
 							for(let key in snapshot.val()) {
@@ -87,10 +89,6 @@ export default new Vuex.Store({
 			let decksRef = fire.database().ref('decks/').orderByKey().limitToLast(100)
 			decksRef.on('value', snapshot => {
 				let decks = snapshot.val()
-				for(let key in decks) {
-					decks[key].deckPermissions = 'public'
-					decks[key].key = key
-				}
 				if(state.authenticated) {
 					let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
 					scoresRef.on('value', snapshot => {
@@ -106,44 +104,52 @@ export default new Vuex.Store({
 				}
 			})
 		},
-		LOAD_DECK_BY_ID: ({ commit, state }, {id, deckPermissions}) => {
+		LOAD_DECK_BY_ID: ({ commit, state }, {key, deckPermissions}) => {
 			let decksRef
 			if(deckPermissions === 'private') {
-				decksRef = fire.database().ref(`${state.user.deckRef}/${id}`)
+				decksRef = fire.database().ref(`${state.user.deckRef}/${key}`)
 			} else {
-				decksRef = fire.database().ref(`decks/${id}`)
+				decksRef = fire.database().ref(`decks/${key}`)
 			}
 			return new Promise((resolve, reject) => {
 				decksRef.on('value', snapshot => {
-					let id = snapshot.key
 					let deck = {
-						...snapshot.val(),
-						key: id
+						...snapshot.val()
 					}
 					if(state.authenticated) {
-						let scoresRef = fire.database().ref(`${state.user.scoreRef}/${id}`)
+						let scoresRef = fire.database().ref(`${state.user.scoreRef}/${key}`)
 						scoresRef.on('value', snapshot => {
 							deck.score = snapshot.val()
-							commit('SET_SELECTED_DECK', {deck: deck})
+							commit('SET_SELECTED_DECK', {deck: deck, key: key})
 							resolve()
 						})
 					} else {
-						commit('SET_SELECTED_DECK', {deck: deck})
+						commit('SET_SELECTED_DECK', {deck: deck, key: key})
 						resolve()
 					}
 				})
 			})
 		},
-		DELETE_DECK_BY_ID: ({ commit, state }, id) => {
-			try {
-				fire.database().ref(`${state.user.deckRef}/${id}`).remove()
-				fire.database().ref(`${state.user.scoreRef}/${id}`).remove()
-			} catch(e) {
-				console.log(e)
-			}
+		DELETE_DECK_BY_KEY: ({ commit, state }, key) => {
+			return new Promise((resolve, reject) => {
+				if(!key || typeof key !== 'undefined' || key !== null) {
+					reject(new Error('No key provided'))
+				}
+				try {
+					fire.database().ref(`${state.user.storageRef}/${key}`).remove().then(() => {
+						fire.database().ref(`${state.user.scoreRef}/${key}`).remove().then(() => {
+							fire.database().ref(`${state.user.deckRef}/${key}`).remove().then(() => {
+								resolve()
+							})
+						})
+					})
+				} catch(e) {
+					console.log('DELETE_DECK_BY_KEY err', e)
+				}
+			})
 		},
-		MARK_CARD_RESULT: ({ commit }, {id, result}) => {
-			commit('SET_CARD_RESULT', {id, result})
+		MARK_CARD_RESULT: ({ commit }, {key, result}) => {
+			commit('SET_CARD_RESULT', {key, result})
 		},
 		SAVE_SCORE: ({ commit, state, dispatch }, score) => {
 			let selectedDeckKey = state.selectedDeck.key
@@ -158,29 +164,63 @@ export default new Vuex.Store({
 		RESET_RESULTS: ({ commit }) => {
 			commit('RESET_RESULTS')
 		},
-		ADD_NEW_QUESTION: ({ commit }, {question, answer}) => {
-			commit('SET_NEW_QUESTION', {question, answer})
+		ADD_NEW_QUESTION: ({ commit }, {question, questionType, answer, answerType}) => {
+			commit('SET_NEW_QUESTION', {question, questionType, answer, answerType})
 		},
-		NAME_DECK: ({ commit }, name) => {
+		CREATE_NEW_DECK: ({ commit, state }, name) => {
 			commit('SET_NEW_DECK_NAME', name)
+			Firebase.database().ref().child(`${state.user.deckRef}`).push(state.newDeck).then(response => {
+				commit('SET_NEW_DECK_KEY', response.key)
+			})
 		},
-		CREATE_DECK: ({ commit, state }) => {
+		UPLOAD_IMAGE: ({ commit, state }, file) => {
+			let storageRef = Firebase.storage().ref()
+			let newImageRef = storageRef.child(`${state.user.storageRef}/${state.newDeck.key}/${file.name}`)
+			return new Promise((resolve, reject) => {
+				newImageRef.put(file).then(snapshot => {
+					if(snapshot.state === 'success') {
+						resolve(snapshot)
+					} else {
+						reject(snapshot)
+					}
+				})
+			})
+		},
+		CREATE_DECK: ({ commit, state, dispatch }) => {
 			let ref
-			let newDeck = Object.assign({}, state.newDeck)
-			newDeck.id = Object.keys(state.myDecks).length
+			let newDeck = Object.assign({}, state.newDeck, {questions: state.newDeck.questions})
 			if(newDeck.deckPermissions === 'public') {
 				ref = '/decks/'
 			} else {
 				ref = state.user.deckRef
 			}
-			fire.database().ref(ref).push(newDeck)
-				.then((response) => {
-					console.log('save response', response)
+			fire.database().ref(ref).child(state.newDeck.key).set(newDeck)
+				.then(() => {
+					// dispatch('RESET_NEW_DECK')
 				}).catch((error) => {
 					commit('SET_ERROR_MESSAGE', error)
 				})
 		},
-		CHANGE_DECK_PERMISSIONS: ({commit}, permissions) => {
+		CHANGE_DECK_PERMISSIONS: ({commit, state}, permissions) => {
+			let oldRef
+			let newRef
+			if(permissions === 'public') {
+				oldRef = Firebase.database().ref().child(`${state.user.deckRef}`).child(state.newDeck.key)
+				newRef = Firebase.database().ref('/decks').child(state.newDeck.key)
+			} else if (permissions === 'private') {
+				oldRef = Firebase.database().ref('/decks').child(state.newDeck.key)
+				newRef = Firebase.database().ref(`${state.user.deckRef}`).child(state.newDeck.key)
+			}
+			oldRef.once('value', function(snap) {
+				let deck = snap.val()
+				deck.deckPermissions = permissions
+				deck.key = permissions
+				newRef.set(deck, function(error) {
+					if(!error) {
+						oldRef.remove()
+					}
+				})
+			})
 			commit('SET_DECK_PERMISSIONS', permissions)
 		},
 		SHOW_ERROR: ({ commit }, errorMessage) => {
@@ -192,14 +232,24 @@ export default new Vuex.Store({
 		SAVE_CARD_EDITS: ({commit}, {index, card}) => {
 			commit('SET_EDITS', {index, card})
 		},
-		RESET_NEW_DECK: ({commit}) => {
-			commit('SET_RESET')
+		RESET_NEW_DECK: ({commit, state, dispatch}) => {
+			return new Promise((resolve, reject) => {
+				dispatch('DELETE_DECK_BY_KEY', state.newDeck.key).then(() => {
+					commit('SET_RESET')
+					resolve()
+				})
+			})
 		},
 		DELETE_CARD: ({commit}, index) => {
 			commit('SET_DELETE', index)
 		}
 	},
 	mutations: {
+		SIGN_OUT_USER: (state) => {
+			state.authenticated = false
+			state.user = Object.assign({})
+			state.myDecks = Object.assign({})
+		},
 		SET_AUTHENTICATED: (state, {authd, user}) => {
 			state.authenticated = authd
 			state.user = Object.assign({}, user)
@@ -227,10 +277,8 @@ export default new Vuex.Store({
 				deckPermissions: permissions
 			}
 		},
-		SET_NEW_DECK: (state) => {
-			let newDeck = Object.assign({}, state.newDeck)
-			newDeck.id = state.myDecks.length
-			fire.database().ref('decks/').push(newDeck)
+		SET_NEW_DECK_KEY: (state, key) => {
+			state.newDeck.key = key
 		},
 		SET_NEW_DECK_NAME: (state, name) => {
 			state.newDeck.name = name
@@ -243,9 +291,8 @@ export default new Vuex.Store({
 			}
 			state.newDeck = Object.assign({}, reset)
 		},
-		SET_NEW_QUESTION: (state, { question, answer }) => {
-			let len = state.newDeck.questions.length
-			state.newDeck.questions = state.newDeck.questions.concat({id: len, question: question, answer: answer, result: ''})
+		SET_NEW_QUESTION: (state, { question, questionType, answer, answerType }) => {
+			state.newDeck.questions = state.newDeck.questions.concat({question: question, questionType: questionType, answer: answer, answerType: answerType, result: ''})
 		},
 		SET_MY_DECKS: (state, {decks}) => {
 			state.myDecks = Object.assign({}, decks)
@@ -253,21 +300,21 @@ export default new Vuex.Store({
 		SET_PUBLIC_DECKS: (state, {decks}) => {
 			state.publicDecks = Object.assign({}, decks)
 		},
-		SET_SELECTED_DECK: (state, { deck }) => {
-			state.selectedDeck = Object.assign({}, deck)
+		SET_SELECTED_DECK: (state, { deck, key }) => {
+			state.selectedDeck = Object.assign({}, deck, {key: key})
 		},
-		SET_CARD_RESULT: (state, { id, result }) => {
-			state.selectedDeck.questions = state.selectedDeck.questions.map(card => {
-				if(card.id === id) {
-					card.result = result
+		SET_CARD_RESULT: (state, { key, result }) => {
+			for(let i in state.selectedDeck.questions) {
+				if(i === key) {
+					state.selectedDeck.questions[i].result = result
 				}
-				return card
-			})
+			}
+			state.selectedDeck.questions = Object.assign({}, state.selectedDeck.questions)
 		},
 		RESET_RESULTS: (state) => {
-			state.selectedDeck.questions = state.selectedDeck.questions.map(card => {
-				card.result = ''
-				return card
+			state.selectedDeck.questions = Object.keys(state.selectedDeck.questions).map(key => {
+				state.selectedDeck.questions[key].result = ''
+				return state.selectedDeck.questions[key]
 			})
 		}
 	},

@@ -15,12 +15,12 @@ export default new Router({
 			component: Home
 		},
 		{
-			path: '/quiz/:id/:deckPermissions/:name',
+			path: '/quiz/:deckPermissions/:key/:name',
 			name: 'Quiz',
 			component: Quiz,
 			props: true,
 			beforeEnter(to, from, next) {
-				Store.dispatch('LOAD_DECK_BY_ID', {id: to.params.id, deckPermissions: to.params.deckPermissions}).then(() => {
+				Store.dispatch('LOAD_DECK_BY_ID', {key: to.params.key, deckPermissions: to.params.deckPermissions}).then(() => {
 					next()
 				})
 			}
