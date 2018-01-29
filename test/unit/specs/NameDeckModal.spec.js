@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import NameDeckModal from '@/components/NameDeckModal'
-import $ from 'jquery'
 import 'bootstrap'
 describe('NameDeckModal.vue', () => {
 	let vm
@@ -11,6 +10,9 @@ describe('NameDeckModal.vue', () => {
 			propsData: {
 				newDeckName: 'hello world',
 				saveDeckName: jest.fn()
+			},
+			methods: {
+				openModal: jest.fn()
 			}
 		}).$mount()
 	})
@@ -57,6 +59,14 @@ describe('NameDeckModal.vue', () => {
 			})
 			.catch(done)
 	})
+	it('to not open modal if newDeckName is present', (done) => {
+		Vue.nextTick()
+			.then(() => {
+				expect(vm.$options.methods.openModal).not.toHaveBeenCalled()
+				done()
+			})
+			.catch(done)
+	})
 	it('to open modal if newDeckName is not present', (done) => {
 		const Constructor = Vue.extend(NameDeckModal)
 		let vm = new Constructor({
@@ -71,24 +81,6 @@ describe('NameDeckModal.vue', () => {
 		Vue.nextTick()
 			.then(() => {
 				expect(vm.$options.methods.openModal).toHaveBeenCalled()
-				done()
-			})
-			.catch(done)
-	})
-	it('to not open modal if newDeckName is present', (done) => {
-		const Constructor = Vue.extend(NameDeckModal)
-		let vm = new Constructor({
-			propsData: {
-				newDeckName: 'presesnt',
-				saveDeckName: jest.fn()
-			},
-			methods: {
-				openModal: jest.fn()
-			}
-		}).$mount()
-		Vue.nextTick()
-			.then(() => {
-				expect(vm.$options.methods.openModal).not.toHaveBeenCalled()
 				done()
 			})
 			.catch(done)
