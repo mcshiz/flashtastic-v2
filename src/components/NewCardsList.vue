@@ -3,16 +3,27 @@
 		<editCardModal :card="card" :index="editIndex" :save="save"></editCardModal>
 		<ul class="list-group">
 			<li v-for='(newCard, index) in cards' :key='`question-${index}`' class="list-group-item">
-				<div class="row">
-					<span class="col-12 col-md-10 text-left justify-content-center align-self-center">
-						<b class="new-question-label">Question:</b> {{newCard.question}}
-						<br/>
-						<b class="new-question-label">Answer:</b> {{newCard.answer}}
-					</span>
-					<div class="col-auto col-md-1 pull-right" >
+				<div class="row text-left">
+					<div class="col-12 col-sm-5 align-self-center">
+						<b class="new-question-label">Question:</b>
+						<span v-if="newCard.questionType === 'image'" >
+							<br>
+							<img :src="newCard.question" alt="" height="200" width="200">
+						</span>
+						<span v-else>{{newCard.question}}</span>
+					</div>
+					<div class="col-12 col-sm-5 align-self-center">
+						<b class="new-question-label">Answer:</b>
+						<span v-if="newCard.answerType === 'image'">
+							<br>
+							<img :src="newCard.answer" alt="" height="200" width="200">
+						</span>
+						<span v-else>{{newCard.answer}}</span>
+					</div>
+					<div class="col-auto col-md-1 pull-right align-self-center">
 						<button class="btn ripple btn-primary" v-on:click="editCard(newCard, index)">Edit</button>
 					</div>
-					<div class="col-auto col-md-1 pull-right">
+					<div class="col-auto col-md-1 pull-right align-self-center">
 						<button class="btn ripple btn-danger" v-on:click="deleteCard(index)">Delete</button>
 					</div>
 				</div>
