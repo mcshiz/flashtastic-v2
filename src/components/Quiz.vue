@@ -7,8 +7,8 @@
 	</div>
 	<div class="row">
 		<div class="col-12 col-sm-10 col-md-6">
-			<span>Card {{currentIndex + 1}} of {{selectedDeck.questions.length}}</span>
-			<card :card="selectedDeck.questions[currentIndex]" :showAnswer="showAnswer" :markScore="markScore"></card>
+			<span>Card {{currentIndex + 1}} of {{deckLength}}</span>
+			<card :card="selectedDeck.questions[currentCard]" :showAnswer="showAnswer" :markScore="markScore"></card>
 		</div>
 		<div class="col-12 col-sm-2 col-md-4">
 			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}" :lastScore="selectedDeck.score"></score>
@@ -18,7 +18,7 @@
 		<div class="col-12 col-sm-10 col-md-6">
 			<button class='btn ripple btn-info card-nav' v-on:click="goToPreviousCard()" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
 			<button class='btn ripple btn-secondary' v-on:click="flipCard()">Flip Card</button>
-			<button class='btn ripple btn-info card-nav' v-on:click="goToNextCard()" :disabled="currentIndex + 1 === selectedDeck.questions.length"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+			<button class='btn ripple btn-info card-nav' v-on:click="goToNextCard()" :disabled="currentIndex + 1 === deckLength"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
 			<button class='btn ripple btn-danger' v-on:click="reset()"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
 		</div>
 	</div>
@@ -31,9 +31,38 @@ import Card from './Card'
 import { mapState } from 'vuex'
 export default {
 	name: 'Quiz',
+	props: ['id', 'name', 'deck'],
+	data() {
+		return {
+			currentIndex: 0,
+			showAnswer: false
+		}
+	},
+	computed: {
+		...mapState(['selectedDeck']),
+		score: function() {
+			let correct = 0
+			let incorrect = 0
+			for(let key in this.selectedDeck.questions) {
+				let card = this.selectedDeck.questions[key]
+				card.result === 'correct' && correct++
+				card.result === 'incorrect' && incorrect++
+			}
+			return {'correct': correct, 'incorrect': incorrect}
+		},
+		deckLength: function() {
+			return Object.keys(this.selectedDeck.questions).length
+		},
+		currentCard: function() {
+			return Object.keys(this.selectedDeck.questions)[this.currentIndex]
+		},
+		deckKey: function() {
+			return Object.keys(this.selectedDeck.questions)[this.currentIndex]
+		}
+	},
 	methods: {
 		goToNextCard: function() {
-			if(this.currentIndex <= this.selectedDeck.questions.length) {
+			if(this.currentIndex <= this.deckLength) {
 				this.showAnswer = false
 				this.currentIndex++
 			}
@@ -47,7 +76,7 @@ export default {
 		},
 		markScore: function(result) {
 			this.$store.dispatch('MARK_CARD_RESULT', {
-				id: this.currentIndex,
+				key: this.currentCard,
 				result: result
 			})
 		},
@@ -57,36 +86,17 @@ export default {
 			this.$store.dispatch('RESET_RESULTS')
 		}
 	},
-	data() {
-		return {
-			currentIndex: 0,
-			showAnswer: false
-		}
-	},
-	computed: {
-		...mapState(['selectedDeck']),
-		score: function() {
-			let correct = 0
-			let incorrect = 0
-			this.selectedDeck.questions.forEach(card => {
-				card.result === 'correct' && correct++
-				card.result === 'incorrect' && incorrect++
-			})
-			return {'correct': correct, 'incorrect': incorrect}
-		}
-	},
-	props: ['id', 'name', 'deck'],
-	components: {
-		'score': Score,
-		'card': Card
-	},
 	watch: {
 		score: function() {
 			// when they've scored every card save the score
-			if(this.score.correct + this.score.incorrect === this.selectedDeck.questions.length) {
+			if(this.score.correct + this.score.incorrect === this.deckLength) {
 				this.$store.dispatch('SAVE_SCORE', this.score)
 			}
 		}
+	},
+	components: {
+		'score': Score,
+		'card': Card
 	}
 }
 </script>
