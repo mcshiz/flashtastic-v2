@@ -85,8 +85,9 @@ export default {
 					next()
 				})
 			}
+		} else {
+			next()
 		}
-		next()
 	},
 	methods: {
 		deleteCard: function(index) {

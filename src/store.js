@@ -132,20 +132,16 @@ export default new Vuex.Store({
 		},
 		DELETE_DECK_BY_KEY: ({ commit, state }, key) => {
 			return new Promise((resolve, reject) => {
-				if(!key || typeof key !== 'undefined' || key !== null) {
+				if(!key || typeof key === 'undefined' || key === null) {
 					reject(new Error('No key provided'))
 				}
-				try {
-					fire.database().ref(`${state.user.storageRef}/${key}`).remove().then(() => {
-						fire.database().ref(`${state.user.scoreRef}/${key}`).remove().then(() => {
-							fire.database().ref(`${state.user.deckRef}/${key}`).remove().then(() => {
-								resolve()
-							})
+				fire.database().ref(`${state.user.storageRef}/${key}`).remove().then(() => {
+					fire.database().ref(`${state.user.scoreRef}/${key}`).remove().then(() => {
+						fire.database().ref(`${state.user.deckRef}/${key}`).remove().then(() => {
+							resolve()
 						})
 					})
-				} catch(e) {
-					console.log('DELETE_DECK_BY_KEY err', e)
-				}
+				})
 			})
 		},
 		MARK_CARD_RESULT: ({ commit }, {key, result}) => {
@@ -196,7 +192,7 @@ export default new Vuex.Store({
 			}
 			fire.database().ref(ref).child(state.newDeck.key).set(newDeck)
 				.then(() => {
-					// dispatch('RESET_NEW_DECK')
+					commit('SET_RESET')
 				}).catch((error) => {
 					commit('SET_ERROR_MESSAGE', error)
 				})
