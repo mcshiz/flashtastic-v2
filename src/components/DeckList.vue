@@ -17,7 +17,7 @@
 							<span v-else>Not Completed</span>
 						</div>
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
-							<button class="btn btn-info" v-on:click="loadQuiz(deck, key)">Study</button>
+							<button class="btn btn-info btn-sm" v-on:click="loadQuiz(deck, key)">Study</button>
 						</div>
 						<div class="col-2 col-sm-2 col-md-1 align-self-center">
 							<span v-if="deck.deckPermissions === 'private'"  v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
