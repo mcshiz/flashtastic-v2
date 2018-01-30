@@ -36,7 +36,7 @@ export default {
 		padding-top: 40px;
 		min-height: 100%;
 	}
-	@media screen and (min-width: 576px){
+	@media screen and (max-width: 576px){
 		.wrapper {
 			padding-top: 10px;
 		}
