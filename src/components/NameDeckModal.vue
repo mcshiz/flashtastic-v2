@@ -1,5 +1,5 @@
 <template>
-	<div class="modal fade" id="nameDeckModal" tabindex="-1" role="dialog"  aria-hidden="true">
+	<div class="modal fade" id="deckModal" tabindex="-1" role="dialog"  aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -21,11 +21,11 @@
 <script>
 import $ from 'jquery'
 export default {
-	name: 'NameDeckModal',
+	name: 'deckModal',
 	props: ['newDeckName', 'saveDeckName'],
 	data() {
 		return {
-			deckName: ''
+			deckName: this.newDeckName.slice(0)
 		}
 	},
 	methods: {
@@ -33,25 +33,24 @@ export default {
 			if (this.deckName === '') {
 				return false
 			}
-			$('#nameDeckModal').modal('hide')
+			$('#deckModal').modal('hide')
 			this.saveDeckName(this.deckName)
 		},
 		openModal: function() {
-			$('#nameDeckModal').modal({
+			$('#deckModal').modal({
 				keyboard: false,
 				backdrop: 'static'
 			})
 		},
 		cancel: function() {
-			$('#nameDeckModal').modal('hide')
+			$('#deckModal').modal('hide')
 		}
 	},
 	mounted() {
-		// open modal and prevent dismiss without clicking save button
+		// open modal
 		if(this.newDeckName === '') {
 			this.openModal()
 		}
-		this.deckName = this.newDeckName.slice(0)
 	}
 }
 </script>
