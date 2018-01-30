@@ -4,9 +4,13 @@
 			<div class="row">
 				<h1 class="col">{{msg}}</h1>
 			</div>
-			<div class="row">
-				<div class="col deck-title-container">
-					<span class="deck-title">{{newDeck.name}}</span>
+			<div class="row mb-4">
+				<div class="col-9">
+					<div class="deck-title h-100"  data-toggle="modal" data-target="#nameDeckModal">
+					{{newDeck.name}}
+					</div>
+				</div>
+				<div class="col-3 align-self-end">
 					<button class="btn ripple btn-light deck-title-edit-button" data-toggle="modal" data-target="#nameDeckModal">
 						<i class="fa fa-pencil" aria-hidden="true"></i>
 					</button>
@@ -29,17 +33,17 @@
 					<newCardsList :cards="newDeck.questions" :deleteCard="deleteCard" :save="saveEdits"></newCardsList>
 				</div>
 			</div>
-			<div class="row new-question-container">
+			<div class="row new-question-container mt-4">
 				<div class="col-12">
 					<h4 class="text-left">Add a new question</h4>
 				</div>
-				<div class="col-12 col-sm-5 text-left">
+				<div class="col-12 col-sm-5 text-center mb-4">
 					<new-question-answer-fields :field="'questionImage'" :type="newQuestionType" :loading="questionImageLoading" v-model="newQuestion" :upload="uploadImage"></new-question-answer-fields>
 				</div>
-				<div class="col-12 col-sm-5">
+				<div class="col-12 col-sm-5 text-center mb-4">
 					<new-question-answer-fields :field="'answerImage'" :type="newAnswerType" :loading="answerImageLoading" v-model="newAnswer" :upload="uploadImage"></new-question-answer-fields>
 				</div>
-				<div class="col-12 col-sm-2">
+				<div class="col-12 col-sm-2 mb-4">
 					<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
 					<button class="btn ripple btn-secondary" v-on:click="clearCard">Clear</button>
 				</div>
@@ -58,12 +62,13 @@ import NewCardsList from './NewCardsList'
 import NameDeckModal from './NameDeckModal'
 import $ from 'jquery'
 import { mapState } from 'vuex'
-import NewQuestionAnswerFields from "./NewQuestionAnswerFields";
+import NewQuestionAnswerFields from './NewQuestionAnswerFields'
+import ImageTools from '../assets/ImageTools'
 export default {
 	name: 'NewCard',
 	data() {
 		return {
-			msg: 'Create a new quiz deck',
+			msg: 'Create New Quiz',
 			newQuestion: '',
 			newAnswer: '',
 			newQuestionType: 'text',
@@ -83,12 +88,16 @@ export default {
 			if(confirm('Leaving will discard any changes')) {
 				this.resetNewDeck().then(() => {
 					next()
+				}).catch(error => {
+					console.log(error)
+					next()
 				})
 			}
 		} else {
 			next()
 		}
 	},
+
 	methods: {
 		deleteCard: function(index) {
 			if(window.confirm('Are you sure you want to delete this question?')) {
@@ -108,11 +117,13 @@ export default {
 				this.deckPermissions = 'private'
 				this.$store.dispatch('RESET_NEW_DECK').then(() => {
 					resolve()
+				}).catch(error => {
+					reject(new Error(error))
 				})
 			})
 		},
 		saveDeckName: function (name) {
-			this.$store.dispatch('CREATE_NEW_DECK', name)
+			this.$store.dispatch('CREATE_NEW_DECK_PLACEHOLDER', name)
 		},
 		clearCard: function() {
 			this.newQuestion = ''
@@ -153,7 +164,6 @@ export default {
 			})
 		},
 		uploadImage: function(e, field) {
-			console.log(field)
 			let file = e.target.files[0]
 			let reader = new FileReader()
 			if(field === 'questionImage') {
@@ -167,17 +177,22 @@ export default {
 				return false
 			}
 			file.src = reader.result
-			this.$store.dispatch('UPLOAD_IMAGE', file).then(response => {
-				if(field === 'questionImage') {
-					this.newQuestion = response.downloadURL
-					this.questionImageLoading = false
-				} else {
-					this.newAnswer = response.downloadURL
-					this.answerImageLoading = false
-				}
-			}).catch(error => [
-				console.log('err', error)
-			])
+			ImageTools.resize(file, {
+				width: 810, // maximum width
+				height: 375 // maximum height
+			}, (blob, didItResize) => {
+				this.$store.dispatch('UPLOAD_IMAGE', blob).then((response) => {
+					if(field === 'questionImage') {
+						this.newQuestion = response.downloadURL
+						this.questionImageLoading = false
+					} else {
+						this.newAnswer = response.downloadURL
+						this.answerImageLoading = false
+					}
+				}).catch(error => [
+					console.log('err', error)
+				])
+			})
 		}
 	},
 	components: {
@@ -192,19 +207,12 @@ export default {
 	.deck-title {
 		vertical-align: middle;
 		font-size: 2.25em;
+		border-bottom: 1px solid lightgray;
 	}
 	.deck-title-edit-button {
-		visibility: hidden;
+		background-color: lightgray;
 	}
 	.deck-title-container:hover .deck-title-edit-button {
-		visibility: visible;
-	}
-	.new-question-label {
-		display: inline-block;
-		width: 75px;
-	}
-	.new-question-container {
-		margin-top: 30px;
-		margin-bottom: 30px;
+		background-color: darkgray;
 	}
 </style>
