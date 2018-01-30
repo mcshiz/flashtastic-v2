@@ -28,7 +28,15 @@ export default new Router({
 		{
 			path: '/create-new',
 			name: 'CreateNew',
-			component: CreateNew
+			component: CreateNew,
+			beforeEnter(to, from, next) {
+				if(!Store.state.authenticated) {
+					Store.dispatch('SHOW_ERROR', 'You must login to create decks')
+					next({name: 'Home'})
+				} else {
+					next()
+				}
+			}
 		},
 		{
 			path: '/profile',
