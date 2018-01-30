@@ -17,10 +17,11 @@
 							<span v-else>Not Completed</span>
 						</div>
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
-							<button class="btn btn-info btn-sm" v-on:click="loadQuiz(deck, key)">Study</button>
+							<button class="btn btn-info btn-sm mb-1 col-12" v-on:click="loadDeck(deck, key)">Study</button>
 						</div>
-						<div class="col-2 col-sm-2 col-md-1 align-self-center">
-							<span v-if="deck.deckPermissions === 'private'"  v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
+						<div v-if="deck.deckPermissions === 'private'" class="col-2 col-sm-2 col-md-1 align-self-center">
+							<button class="btn btn-default btn-sm col-12" v-on:click="editDeck(key)">Edit</button>
+							<span v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
 						</div>
 					</div>
 				</li>
@@ -42,7 +43,10 @@ export default {
 	name: 'DeckList',
 	props: ['decks'],
 	methods: {
-		loadQuiz: function(deck, key) {
+		editDeck: function(key) {
+			this.$router.push({name: 'EditDeck', params: {key: key}})
+		},
+		loadDeck: function(deck, key) {
 			this.$router.push({name: 'Quiz', params: {key: key, name: deck.name, deckPermissions: deck.deckPermissions}})
 		},
 		deleteDeck: function(key) {
