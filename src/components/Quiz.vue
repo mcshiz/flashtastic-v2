@@ -1,24 +1,28 @@
 <template>
 <div class="content" v-if="selectedDeck">
 	<div class="row">
-		<div class="col">
+		<div class="col-12">
 			<h1>{{selectedDeck.name}}</h1>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-12 col-sm-10 col-md-6">
+		<div class="col-12 col-md-10 col-lg-6">
 			<span>Card {{currentIndex + 1}} of {{deckLength}}</span>
 			<card :card="selectedDeck.questions[currentCard]" :showAnswer="showAnswer" :markScore="markScore"></card>
 		</div>
-		<div class="col-12 col-sm-2 col-md-4">
+		<div class="col-12 col-md-2">
 			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}" :lastScore="selectedDeck.score"></score>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-12 col-sm-10 col-md-6">
+		<div class="col-12 mb-2">
 			<button class='btn ripple btn-info card-nav' v-on:click="goToPreviousCard()" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
 			<button class='btn ripple btn-secondary' v-on:click="flipCard()">Flip Card</button>
 			<button class='btn ripple btn-info card-nav' v-on:click="goToNextCard()" :disabled="currentIndex + 1 === deckLength"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
 			<button class='btn ripple btn-danger' v-on:click="reset()"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
 		</div>
 	</div>
