@@ -1,12 +1,12 @@
 <template v-if="authenticated">
 	<div class="content">
 		<div class="row">
-			<div class="col-8 col-sm-10 text-left">
+			<div class="col-8 col-sm-9 text-left">
 				<h2 class="text=center">
 					{{user.displayName}}
 				</h2>
 			</div>
-			<div class=" col-2 col-sm-2 text-center">
+			<div class=" col-2 col-sm-3 text-center">
 				<auth-buttons />
 			</div>
 		</div>
