@@ -5,10 +5,27 @@ import Home from '@/components/Home'
 import Quiz from '@/components/Quiz'
 import CreateNew from '@/components/CreateNew'
 import UserPage from '@/components/UserPage'
+import EditDeck from '@/components/EditDeck'
 
 Vue.use(Router)
 export default new Router({
 	routes: [
+		{
+			path: '/edit/:key',
+			name: 'EditDeck',
+			component: EditDeck,
+			props: true,
+			beforeEnter(to, from, next) {
+				if(!Store.state.authenticated) {
+					Store.dispatch('SHOW_ERROR', 'You must login to edit decks')
+					next({name: 'Home'})
+				} else {
+					Store.dispatch('LOAD_DECK_BY_ID', {key: to.params.key}).then(() => {
+						next({name: EditDeck})
+					})
+				}
+			}
+		},
 		{
 			path: '/',
 			name: 'Home',
