@@ -133,13 +133,24 @@ export default new Vuex.Store({
 		DELETE_DECK_BY_KEY: ({ commit, state }, key) => {
 			return new Promise((resolve, reject) => {
 				if(!key || typeof key === 'undefined' || key === null) {
-					reject(new Error('No key provided'))
+					// stupid hack to delete decks without questions because firebase can't store an empty object
+					fire.database().ref(`${state.user.deckRef}/`).on('value', snapshot => {
+						let decks = snapshot.val()
+						for(key in decks) {
+							if(!decks[key].hasOwnProperty('questions')) {
+								fire.database().ref(`${state.user.deckRef}/${key}`).remove()
+							}
+						}
+						reject(new Error('No key provided'))
+					})
+					return
 				}
-				fire.database().ref(`${state.user.storageRef}/${key}`).remove().then(() => {
-					fire.database().ref(`${state.user.scoreRef}/${key}`).remove().then(() => {
-						fire.database().ref(`${state.user.deckRef}/${key}`).remove().then(() => {
-							resolve()
-						})
+				// need to figure out a way to recursively delete files @ directory
+				// Firebase.storage().ref().child(`${state.user.storageRef}/${key}`).delete() doesnt work
+				// because we need to specify a ref all the way down to the exact filename
+				fire.database().ref(`${state.user.scoreRef}/${key}`).remove().then(() => {
+					fire.database().ref(`${state.user.deckRef}/${key}`).remove().then(() => {
+						resolve()
 					})
 				})
 			})
@@ -163,7 +174,7 @@ export default new Vuex.Store({
 		ADD_NEW_QUESTION: ({ commit }, {question, questionType, answer, answerType}) => {
 			commit('SET_NEW_QUESTION', {question, questionType, answer, answerType})
 		},
-		CREATE_NEW_DECK: ({ commit, state }, name) => {
+		CREATE_NEW_DECK_PLACEHOLDER: ({ commit, state }, name) => {
 			commit('SET_NEW_DECK_NAME', name)
 			Firebase.database().ref().child(`${state.user.deckRef}`).push(state.newDeck).then(response => {
 				commit('SET_NEW_DECK_KEY', response.key)
@@ -233,6 +244,8 @@ export default new Vuex.Store({
 				dispatch('DELETE_DECK_BY_KEY', state.newDeck.key).then(() => {
 					commit('SET_RESET')
 					resolve()
+				}).catch(error => {
+					reject(error)
 				})
 			})
 		},
