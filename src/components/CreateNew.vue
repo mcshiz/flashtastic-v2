@@ -4,36 +4,15 @@
 			<div class="row">
 				<h1 class="col">{{msg}}</h1>
 			</div>
-			<div class="row mb-4">
-				<div class="col-9">
-					<div class="deck-title h-100"  data-toggle="modal" data-target="#nameDeckModal">
-					{{newDeck.name}}
-					</div>
-				</div>
-				<div class="col-3 align-self-end">
-					<button class="btn ripple btn-light deck-title-edit-button" data-toggle="modal" data-target="#nameDeckModal">
-						<i class="fa fa-pencil" aria-hidden="true"></i>
-					</button>
-				</div>
+			<deck-name :deck="newDeck"></deck-name>
+			<div class="row">
+				<deck-tagging></deck-tagging>
+				<deck-permissions :deckPermissions="deckPermissions" :save="saveDeckPermissions"></deck-permissions>
 			</div>
 			<div class="row">
-				<div class="col-12 col-sm-6">
-					<input type="text" class="form-control tags" placeholder="Chemistry, Nursing" id="deck-tags">
-					<small id="tagsHelp" class="form-text text-muted text-left">Tag this deck for easier finding later</small>
-				</div>
-				<div class="col-12 col-sm-6">
-					<select name="deckPermissions" id="deckPermissions" v-model="deckPermissions" v-on:change="saveDeckPermissions">
-						<option value="private">Private - Only I can use this deck</option>
-						<option value="public">Public - Let everyone use this deck</option>
-					</select>
-				</div>
+				<newCardsList :cards="newDeck.questions" :delete="deleteCard" :save="saveEdits"></newCardsList>
 			</div>
-			<div class="row">
-				<div class="col">
-					<newCardsList :cards="newDeck.questions" :deleteCard="deleteCard" :save="saveEdits"></newCardsList>
-				</div>
-			</div>
-			<div class="row new-question-container mt-4">
+			<div class="row new-question-container">
 				<div class="col-12">
 					<h4 class="text-left">Add a new question</h4>
 				</div>
@@ -64,6 +43,9 @@ import $ from 'jquery'
 import { mapState } from 'vuex'
 import NewQuestionAnswerFields from './NewQuestionAnswerFields'
 import ImageTools from '../assets/ImageTools'
+import DeckName from './DeckName'
+import DeckPermissions from './DeckPermissions'
+import DeckTagging from './DeckTagging'
 export default {
 	name: 'NewCard',
 	data() {
@@ -99,14 +81,14 @@ export default {
 	},
 
 	methods: {
+		saveDeckPermissions: function() {
+			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', this.deckPermissions)
+		},
 		deleteCard: function(index) {
-			if(window.confirm('Are you sure you want to delete this question?')) {
-				this.$store.dispatch('DELETE_CARD', index)
-			}
+			this.$store.dispatch('DELETE_CARD', index)
 		},
 		saveEdits: function(card) {
 			this.$store.dispatch('SAVE_CARD_EDITS', card)
-			$('#editModal').modal('hide')
 		},
 		resetNewDeck: function() {
 			return new Promise((resolve, reject) => {
@@ -143,16 +125,13 @@ export default {
 			this.newQuestionType = 'text'
 			this.newAnswerType = 'text'
 		},
-		saveDeckPermissions: function() {
-			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', this.deckPermissions)
-		},
 		createDeck: function() {
 			if(!this.newDeck.questions.length) {
 				this.$store.dispatch('SHOW_ERROR', 'You must first add questions and answers')
 				return
 			}
 			if(this.newDeck.name === '') {
-				$('#nameDeckModal').modal({
+				$('#deckModal').modal({
 					keyboard: false,
 					backdrop: 'static'
 				})
@@ -196,6 +175,9 @@ export default {
 		}
 	},
 	components: {
+		DeckTagging,
+		DeckPermissions,
+		DeckName,
 		NewQuestionAnswerFields,
 		'newCardsList': NewCardsList,
 		'nameDeckModal': NameDeckModal
