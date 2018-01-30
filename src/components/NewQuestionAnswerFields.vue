@@ -1,9 +1,9 @@
 <template>
 	<div v-bind:class="{'input-group' : type === 'text'}">
 		<span v-if="loading">Loading...</span>
-		<img v-if="type === 'image'"  :src="value" alt="" height="200" width="200">
-		<input v-else type="text" class="form-control" placeholder="Question" aria-label="Question"  v-bind:value="value" v-on:input="updateValue($event.target.value)">
-		<div class="input-group-append">
+		<img v-if="type === 'image'"  :src="value" alt="" height="200" width="200" class="mb-2">
+		<input v-else type="text" class="form-control" :placeholder="field.replace(/image/i, '').toUpperCase()" aria-label="Question"  v-bind:value="value" v-on:input="updateValue($event.target.value)">
+		<div class="input-group-append justify-content-center">
 			<button class="btn btn-secondary" type="button" v-on:click="openImageFinder" tabindex="-1"><i class="fa fa-camera"></i></button>
 		</div>
 		<div style="height:0;overflow:hidden;display:none">
