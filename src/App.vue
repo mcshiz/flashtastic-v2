@@ -37,7 +37,8 @@ export default {
 		min-height: 100%;
 	}
 	.main {
-		overflow:auto;
+		max-height: 100%;
+		overflow:scroll;
 		padding-bottom:50px;
 	}
 
