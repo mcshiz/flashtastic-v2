@@ -1,5 +1,5 @@
 <template>
-	<button v-if="authenticated" v-on:click="signOut" class="btn btn-primary ripple">Sign Out</button>
+	<a v-if="authenticated" v-on:click="signOut" class="text-danger align-self-center">Sign Out</a>
 	<button v-else v-on:click="authenticate" class="btn btn-primary ripple">Sign In With Google</button>
 </template>
 <script>
