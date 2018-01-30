@@ -1,14 +1,14 @@
 <template>
 	<div class="row score-box-row">
-		<div class="score-box col-xs-6">
+		<div class="score-box col-6">
 			<div class="text-center score-box-header">Correct</div>
 			<div class="text-center score-box-value correct">{{score.correct}}</div>
 		</div>
-		<div class="score-box col-xs-6">
+		<div class="score-box col-6">
 			<div class="text-center score-box-header">Incorrect</div>
 			<div class="text-center score-box-value incorrect">{{score.incorrect}}</div>
 		</div>
-		<div class="row" v-if="prevScore">
+		<div class="col-12" v-if="prevScore">
 			Previous Score {{prevScore}}
 		</div>
 	</div>
