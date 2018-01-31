@@ -69,6 +69,9 @@ export default new Vuex.Store({
 					let decks = snapshot.val()
 					for(let key in decks) {
 						decks[key].deckPermissions = 'private'
+						if(!decks[key].hasOwnProperty('questions')) {
+							fire.database().ref(`${state.user.deckRef}/${key}`).remove()
+						}
 					}
 					if(state.authenticated && decks) {
 						let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
