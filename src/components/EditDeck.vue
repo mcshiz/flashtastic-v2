@@ -77,9 +77,13 @@ export default {
 			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
 		},
 		deleteCard: function(index) {
-			let keyz = Object.keys(this.deck.questions)[index]
+			if(Object.keys(this.deck.questions).length === 0) {
+				this.$store.dispatch('SHOW_ERROR', 'You cannot delete all of the cards in this deck')
+				return
+			}
+			let myKey = Object.keys(this.deck.questions)[index]
 			let editedQuestions = Object.keys(this.deck.questions)
-				.filter(key => key !== keyz)
+				.filter(key => key !== myKey)
 				.reduce((result, current) => {
 					result[current] = this.deck.questions[current]
 					return result
