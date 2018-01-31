@@ -1,10 +1,10 @@
 <template>
 	<div class="row score-box-row">
-		<div class="score-box col-6">
+		<div class="score-box">
 			<div class="text-center score-box-header">Correct</div>
 			<div class="text-center score-box-value correct">{{score.correct}}</div>
 		</div>
-		<div class="score-box col-6">
+		<div class="score-box">
 			<div class="text-center score-box-header">Incorrect</div>
 			<div class="text-center score-box-value incorrect">{{score.incorrect}}</div>
 		</div>
