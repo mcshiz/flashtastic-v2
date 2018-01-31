@@ -21,5 +21,16 @@ export default {
 </script>
 
 <style scoped>
-
+	.deck-title {
+		vertical-align: middle;
+		font-size: 2.25em;
+		border-bottom: 1px solid lightgray;
+		cursor: pointer;
+	}
+	.deck-title-edit-button {
+		background-color: lightgray;
+	}
+	.deck-title-container:hover .deck-title-edit-button {
+		background-color: darkgray;
+	}
 </style>

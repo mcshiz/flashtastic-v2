@@ -32,7 +32,8 @@ export default new Vuex.Store({
 							photoURL: result.photoURL,
 							deckRef: `users/${result.uid}/decks`,
 							scoreRef: `users/${result.uid}/scores`,
-							storageRef: `users/${result.uid}/images`
+							storageRef: `users/${result.uid}/images`,
+							id: result.uid
 						}
 					} else {
 						user = {}
@@ -104,14 +105,16 @@ export default new Vuex.Store({
 				}
 			})
 		},
-		LOAD_DECK_BY_ID: ({ commit, state }, {key, deckPermissions}) => {
-			let decksRef
-			if(deckPermissions === 'private') {
-				decksRef = fire.database().ref(`${state.user.deckRef}/${key}`)
-			} else {
-				decksRef = fire.database().ref(`decks/${key}`)
-			}
+		LOAD_DECK_BY_KEY: ({ commit, state }, {key, deckPermissions}) => {
 			return new Promise((resolve, reject) => {
+				let decksRef
+				if(deckPermissions === 'public') {
+					decksRef = fire.database().ref(`decks/${key}`)
+				} else if(deckPermissions === 'private') {
+					decksRef = fire.database().ref(`${state.user.deckRef}/${key}`)
+				} else {
+					reject(new Error('Deck Permissions not specified'))
+				}
 				decksRef.on('value', snapshot => {
 					let deck = {
 						...snapshot.val()
@@ -208,27 +211,33 @@ export default new Vuex.Store({
 					commit('SET_ERROR_MESSAGE', error)
 				})
 		},
-		CHANGE_DECK_PERMISSIONS: ({commit, state}, permissions) => {
+		CHANGE_DECK_PERMISSIONS: ({commit, state}, deck) => {
 			let oldRef
 			let newRef
-			if(permissions === 'public') {
-				oldRef = Firebase.database().ref().child(`${state.user.deckRef}`).child(state.newDeck.key)
-				newRef = Firebase.database().ref('/decks').child(state.newDeck.key)
-			} else if (permissions === 'private') {
-				oldRef = Firebase.database().ref('/decks').child(state.newDeck.key)
-				newRef = Firebase.database().ref(`${state.user.deckRef}`).child(state.newDeck.key)
+			if(deck.deckPermissions === 'public') {
+				oldRef = Firebase.database().ref().child(`${state.user.deckRef}`).child(deck.key)
+				newRef = Firebase.database().ref('/decks').child(deck.key)
+			} else if (deck.deckPermissions === 'private') {
+				oldRef = Firebase.database().ref('/decks').child(deck.key)
+				newRef = Firebase.database().ref(`${state.user.deckRef}`).child(deck.key)
 			}
-			oldRef.once('value', function(snap) {
-				let deck = snap.val()
-				deck.deckPermissions = permissions
-				deck.key = permissions
-				newRef.set(deck, function(error) {
-					if(!error) {
-						oldRef.remove()
-					}
+			return new Promise((resolve, reject) => {
+				oldRef.once('value', function(snap) {
+					let oldDeck = snap.val()
+					oldDeck.deckPermissions = deck.deckPermissions
+					oldDeck.creator = state.user.id
+					newRef.set(oldDeck, function(error) {
+						if(!error) {
+							oldRef.remove()
+							resolve()
+						}
+					}).then(response => {
+						reject(new Error('Could not update permissions'))
+						console.log('REZ', response)
+					})
 				})
+				commit('SET_DECK_PERMISSIONS', deck.deckPermissions)
 			})
-			commit('SET_DECK_PERMISSIONS', permissions)
 		},
 		SHOW_ERROR: ({ commit }, errorMessage) => {
 			commit('SET_ERROR_MESSAGE', errorMessage)
@@ -251,6 +260,15 @@ export default new Vuex.Store({
 		},
 		DELETE_CARD: ({commit}, index) => {
 			commit('SET_DELETE', index)
+		},
+		SAVE_EDITS_BY_KEY: ({ commit, state }, deck) => {
+			let ref
+			if(deck.deckPermissions === 'public') {
+				ref = Firebase.database().ref('/decks').child(deck.key)
+			} else if (deck.deckPermissions === 'private') {
+				ref = Firebase.database().ref(`${state.user.deckRef}`).child(deck.key)
+			}
+			ref.set(deck)
 		}
 	},
 	mutations: {

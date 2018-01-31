@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<nameDeckModal :newDeckName="deck.name" :saveDeckName="saveEdits"></nameDeckModal>
+		<nameDeckModal :newDeckName="deck.name" :saveDeckName="saveEditName"></nameDeckModal>
 		<div class="row">
 			<h1 class="col">Edit</h1>
 		</div>
 		<deck-name :deck="deck"></deck-name>
 		<div class="row">
 			<deck-tagging></deck-tagging>
-			<deck-permissions :deckPermissions="deck.deckPermissions" :save="saveEdits"></deck-permissions>
+			<deck-permissions :deckPermissions="deck.deckPermissions" :save="saveEditPermissions"></deck-permissions>
 		</div>
 		<div class="row">
 			<newCardsList :cards="deck.questions" :delete="deleteCard" :save="saveEdits"></newCardsList>
@@ -60,12 +60,32 @@ export default {
 		clearCard: function() {
 			console.log('clearing...')
 		},
-		saveEdits: function(card) {
-			console.log(card)
-			console.log('saving...')
+		saveEditPermissions: function(permissions) {
+			let editedDeck = Object.assign({}, this.deck, {deckPermissions: permissions})
+			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', editedDeck).then(() => {
+				console.log('loading', permissions)
+				this.$store.dispatch('LOAD_DECK_BY_KEY', {key: this.deck.key, deckPermissions: permissions})
+			})
 		},
-		deleteCard: function() {
-			console.log('deleting....')
+		saveEditName: function(name) {
+			let editedDeck = Object.assign({}, this.deck, {name: name})
+			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
+		},
+		saveEdits: function(card) {
+			let editedQuestions = Object.assign({}, this.deck.questions, {[card.index]: card.card})
+			let editedDeck = Object.assign({}, this.deck, {questions: editedQuestions})
+			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
+		},
+		deleteCard: function(index) {
+			let keyz = Object.keys(this.deck.questions)[index]
+			let editedQuestions = Object.keys(this.deck.questions)
+				.filter(key => key !== keyz)
+				.reduce((result, current) => {
+					result[current] = this.deck.questions[current]
+					return result
+				}, {})
+			let editedDeck = Object.assign({}, this.deck, {questions: editedQuestions})
+			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
 		},
 		uploadImage: function(e, field) {
 			let file = e.target.files[0]

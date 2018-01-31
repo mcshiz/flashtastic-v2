@@ -19,8 +19,8 @@
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
 							<button class="btn btn-info btn-sm mb-1 col-12" v-on:click="loadDeck(deck, key)">Study</button>
 						</div>
-						<div v-if="deck.deckPermissions === 'private'" class="col-2 col-sm-2 col-md-1 align-self-center">
-							<button class="btn btn-default btn-sm col-12" v-on:click="editDeck(key)">Edit</button>
+						<div v-if="(deck.deckPermissions === 'private' || deck.creator === user.id)" class="col-2 col-sm-2 col-md-1 align-self-center">
+							<button class="btn btn-default btn-sm col-12" v-on:click="editDeck(key, deck.deckPermissions)">Edit</button>
 							<span v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
 						</div>
 					</div>
@@ -35,7 +35,7 @@
 </template>
 <script>
 import CreateNewDeckButton from './CreateNewDeckButton'
-
+import { mapState } from 'vuex'
 export default {
 	components: {
 		'create-new-deck-button': CreateNewDeckButton
@@ -43,8 +43,8 @@ export default {
 	name: 'DeckList',
 	props: ['decks'],
 	methods: {
-		editDeck: function(key) {
-			this.$router.push({name: 'EditDeck', params: {key: key}})
+		editDeck: function(key, permissions) {
+			this.$router.push({name: 'EditDeck', params: {key: key, permissions: permissions}})
 		},
 		loadDeck: function(deck, key) {
 			this.$router.push({name: 'Quiz', params: {key: key, name: deck.name, deckPermissions: deck.deckPermissions}})
@@ -54,6 +54,9 @@ export default {
 				this.$store.dispatch('DELETE_DECK_BY_KEY', key)
 			}
 		}
+	},
+	computed: {
+		...mapState(['user'])
 	}
 }
 </script>

@@ -81,8 +81,9 @@ export default {
 	},
 
 	methods: {
-		saveDeckPermissions: function() {
-			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', this.deckPermissions)
+		saveDeckPermissions: function(permissions) {
+			let tmp = Object.assign({}, this.newDeck, {deckPermissions: permissions})
+			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', tmp)
 		},
 		deleteCard: function(index) {
 			this.$store.dispatch('DELETE_CARD', index)
@@ -186,15 +187,4 @@ export default {
 }
 </script>
 <style>
-	.deck-title {
-		vertical-align: middle;
-		font-size: 2.25em;
-		border-bottom: 1px solid lightgray;
-	}
-	.deck-title-edit-button {
-		background-color: lightgray;
-	}
-	.deck-title-container:hover .deck-title-edit-button {
-		background-color: darkgray;
-	}
 </style>
