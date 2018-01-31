@@ -17,10 +17,10 @@
 					<h4 class="text-left">Add a new question</h4>
 				</div>
 				<div class="col-12 col-sm-5 text-center mb-4">
-					<new-question-answer-fields :field="'questionImage'" :type="newQuestionType" :loading="questionImageLoading" v-model="newQuestion" :upload="uploadImage"></new-question-answer-fields>
+					<new-question-answer-fields :id="'question-new'" :field="'questionImage'" :type="newQuestionType" :loading="questionImageLoading" v-model="newQuestion" :upload="uploadImage"></new-question-answer-fields>
 				</div>
 				<div class="col-12 col-sm-5 text-center mb-4">
-					<new-question-answer-fields :field="'answerImage'" :type="newAnswerType" :loading="answerImageLoading" v-model="newAnswer" :upload="uploadImage"></new-question-answer-fields>
+					<new-question-answer-fields :id="'answer-new'" :field="'answerImage'" :type="newAnswerType" :loading="answerImageLoading" v-model="newAnswer" :upload="uploadImage"></new-question-answer-fields>
 				</div>
 				<div class="col-12 col-sm-2 mb-4">
 					<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
@@ -143,13 +143,13 @@ export default {
 				this.$router.push({path: 'home'})
 			})
 		},
-		uploadImage: function(e, field) {
+		uploadImage: function(e, id) {
 			let file = e.target.files[0]
 			let reader = new FileReader()
-			if(field === 'questionImage') {
+			if(id.includes('question')) {
 				this.newQuestionType = 'image'
 				this.questionImageLoading = true
-			} else if (field === 'answerImage') {
+			} else if (id.includes('answer')) {
 				this.newAnswerType = 'image'
 				this.answerImageLoading = true
 			} else {
@@ -162,12 +162,15 @@ export default {
 				height: 375 // maximum height
 			}, (blob, didItResize) => {
 				this.$store.dispatch('UPLOAD_IMAGE', blob).then((response) => {
-					if(field === 'questionImage') {
+					if(id.includes('question')) {
 						this.newQuestion = response.downloadURL
 						this.questionImageLoading = false
-					} else {
+					} else if(id.includes('answer')) {
 						this.newAnswer = response.downloadURL
 						this.answerImageLoading = false
+					} else {
+						console.log('Image Field Not Specified')
+						return false
 					}
 				}).catch(error => [
 					console.log('err', error)

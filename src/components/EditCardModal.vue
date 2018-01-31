@@ -7,10 +7,10 @@
 				</div>
 				<div class="modal-body text-left">
 					<div class="col-12 text-center mb-4">
-						<new-question-answer-fields :field="'questionImage'" :type="editingCard.questionType" :loading="questionImageLoading" v-model="editingCard.question" :upload="uploadImage"></new-question-answer-fields>
+						<new-question-answer-fields :id="'question-edit'" :field="'questionImage'" :type="editingCard.questionType" :loading="questionImageLoading" v-model="editingCard.question" :upload="uploadImage"></new-question-answer-fields>
 					</div>
 					<div class="col-12 text-center mb-4">
-						<new-question-answer-fields :field="'answerImage'" :type="editingCard.answerType" :loading="answerImageLoading" v-model="editingCard.answer" :upload="uploadImage"></new-question-answer-fields>
+						<new-question-answer-fields :id="'question-edit'" :field="'answerImage'" :type="editingCard.answerType" :loading="answerImageLoading" v-model="editingCard.answer" :upload="uploadImage"></new-question-answer-fields>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -43,13 +43,13 @@ export default {
 		'new-question-answer-fields': NewQuestionAnswerFields
 	},
 	methods: {
-		uploadImage: function(e, field) {
+		uploadImage: function(e, id) {
 			let file = e.target.files[0]
 			let reader = new FileReader()
-			if(field === 'questionImage') {
+			if(id.includes('question')) {
 				this.editingCard.questionType = 'image'
 				this.questionImageLoading = true
-			} else if (field === 'answerImage') {
+			} else if (id.includes('answer')) {
 				this.editingCard.answerType = 'image'
 				this.answerImageLoading = true
 			} else {
@@ -62,10 +62,11 @@ export default {
 				height: 375 // maximum height
 			}, (blob, didItResize) => {
 				this.$store.dispatch('UPLOAD_IMAGE', blob).then((response) => {
-					if(field === 'questionImage') {
+					if(id.includes('question')) {
 						this.editingCard.question = response.downloadURL
 						this.questionImageLoading = false
 					} else {
+						this.editingCard.answer = response.downloadURL
 						this.editingCard.answer = response.downloadURL
 						this.answerImageLoading = false
 					}
