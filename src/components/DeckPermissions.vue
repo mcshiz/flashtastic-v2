@@ -1,5 +1,5 @@
 <template>
-	<div class="col-12 col-sm-6 mt-4 mb-4">
+	<div class="col-12 col-sm-6 mb-4">
 		{{permissions}}
 		<select name="deckPermissions" id="deckPermissions" v-model="permissions" v-on:change="save(permissions)">
 			<option value="private">Private - Only I can use this deck</option>
