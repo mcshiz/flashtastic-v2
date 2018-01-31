@@ -81,8 +81,8 @@ export default {
 	},
 
 	methods: {
-		saveDeckPermissions: function(permissions) {
-			let tmp = Object.assign({}, this.newDeck, {deckPermissions: permissions})
+		saveDeckPermissions: function() {
+			let tmp = Object.assign({}, this.newDeck, {deckPermissions: this.deckPermissions})
 			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', tmp)
 		},
 		deleteCard: function(index) {

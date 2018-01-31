@@ -1,6 +1,6 @@
 <template>
 	<div class="col">
-		<editCardModal :card="card" :index="editIndex" :save="saveEdits"></editCardModal>
+		<editCardModal :card="card" :index="editIndex" :save="saveEdits" :uploadImage="upload"></editCardModal>
 		<ul class="list-group">
 			<li v-for='(card, index) in cards' :key='`question-${index}`' class="list-group-item">
 				<div class="row text-left">
@@ -36,7 +36,7 @@ import EditCardModal from './EditCardModal'
 import $ from 'jquery'
 export default {
 	name: 'newCardList',
-	props: ['cards', 'save', 'delete'],
+	props: ['cards', 'save', 'delete', 'upload'],
 	data() {
 		return {
 			card: {},

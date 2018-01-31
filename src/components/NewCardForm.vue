@@ -17,9 +17,9 @@
 </template>
 
 <script>
-	export default {
-		name: "new-card-form"
-	}
+export default {
+	name: 'new-card-form'
+}
 </script>
 
 <style scoped>
