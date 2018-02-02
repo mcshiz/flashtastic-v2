@@ -1,9 +1,14 @@
 # flashtastic-v2
 
+
+# [Live Demo](https://flashtastic-6697b.firebaseapp.com/#/)
 > Flashcard game built with Vue.js
 
 > vuex for state management
 > vue router
+
+I used firebase on this app and I am pleasantly surprised with how awesome it is.
+
 
 ## Build Setup
 
