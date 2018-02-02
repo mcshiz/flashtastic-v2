@@ -7,12 +7,12 @@
 				</h2>
 			</div>
 			<div class=" col-2 col-sm-3 text-center">
-				<auth-buttons />
+				<auth-buttons></auth-buttons>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<my-deck-list v-if="authenticated" :decks="myDecks"></my-deck-list>
+				<my-deck-list v-if="authenticated" :decks="privateDecks"></my-deck-list>
 			</div>
 		</div>
 	</div>
@@ -25,7 +25,7 @@ import {mapState} from 'vuex'
 export default {
 	name: 'UserPage',
 	computed: {
-		...mapState(['myDecks', 'authenticated', 'user'])
+		...mapState(['privateDecks', 'authenticated', 'user'])
 	},
 	components: {
 		'my-deck-list': DeckList,

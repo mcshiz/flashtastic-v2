@@ -5,6 +5,7 @@
 				<div class="modal-header">
 					<h5 class="modal-title">Name This Deck of Notecards</h5>
 				</div>
+				<form>
 				<div class="modal-body">
 					<div class="input-group">
 						<input type="text" class="form-control new-deck-name" placeholder="Deck Name" aria-label="Deck Name" v-model="deckName" >
@@ -12,8 +13,9 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn ripple btn-secondary" v-on:click="cancel" >Cancel</button>
-					<button type="button" class="btn ripple btn-primary save" v-on:click="save">Save changes</button>
+					<button type="submit" class="btn ripple btn-primary save" v-on:click="save">Save changes</button>
 				</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -22,14 +24,16 @@
 import $ from 'jquery'
 export default {
 	name: 'deckModal',
-	props: ['newDeckName', 'saveDeckName'],
+	props: ['name', 'saveDeckName'],
 	data() {
 		return {
-			deckName: this.newDeckName.slice(0)
+			deckName: this.name
 		}
 	},
 	methods: {
-		save: function () {
+		save: function (e) {
+			e.preventDefault()
+			console.log('doing shit')
 			if (this.deckName === '') {
 				return false
 			}

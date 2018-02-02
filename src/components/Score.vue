@@ -8,22 +8,21 @@
 			<div class="text-center score-box-header">Incorrect</div>
 			<div class="text-center score-box-value incorrect">{{score.incorrect}}</div>
 		</div>
-		<div class="col-12" v-if="prevScore">
-			Previous Score {{prevScore}}
+		<div class="col-12" v-for="(score, key) in scores" v-bind:key="key">
+			{{getScoreDate(key, score)}}
+
 		</div>
 	</div>
 </template>
 <script>
 export default {
 	name: 'Quiz',
-	props: ['score', 'lastScore'],
-	computed: {
-		prevScore: function() {
-			if(this.lastScore) {
-				return `${Math.floor((this.lastScore.correct / (this.lastScore.correct + this.lastScore.incorrect)) * 100).toFixed(0)}%`
-			} else {
-				return false
-			}
+	props: ['score', 'scores'],
+	methods: {
+		getScoreDate: function(unix, score) {
+			let dt = new Date(unix / 1000)
+			let str = `${dt.getMonth() + 1}/${dt.getDate()} ${dt.toLocaleTimeString()} - ${score.correct} / ${score.incorrect + score.correct}`
+			return str
 		}
 	}
 }

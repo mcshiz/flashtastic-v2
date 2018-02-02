@@ -20,11 +20,11 @@ export default new Router({
 					Store.dispatch('SHOW_ERROR', 'You must login to edit decks')
 					next({name: 'Home'})
 				} else {
-					if(!to.params.permissions || !to.params.key) {
+					if(!to.params.key) {
 						next({name: 'Home'})
 					}
-					Store.dispatch('LOAD_DECK_BY_KEY', {key: to.params.key, deckPermissions: to.params.permissions}).then(() => {
-						next({name: EditDeck})
+					Store.dispatch('LOAD_DECK_BY_KEY', {key: to.params.key}).then(() => {
+						next()
 					}).catch(error => {
 						console.log(error)
 					})
@@ -37,12 +37,12 @@ export default new Router({
 			component: Home
 		},
 		{
-			path: '/quiz/:deckPermissions/:key/:name',
+			path: '/quiz/:permissions/:key/:name',
 			name: 'Quiz',
 			component: Quiz,
 			props: true,
 			beforeEnter(to, from, next) {
-				Store.dispatch('LOAD_DECK_BY_KEY', {key: to.params.key, deckPermissions: to.params.deckPermissions}).then(() => {
+				Store.dispatch('LOAD_DECK_BY_KEY', {key: to.params.key, permissions: to.params.permissions}).then(() => {
 					next()
 				})
 			}
@@ -56,7 +56,9 @@ export default new Router({
 					Store.dispatch('SHOW_ERROR', 'You must login to create decks')
 					next({name: 'Home'})
 				} else {
-					next()
+					Store.dispatch('CREATE_BLANK_DECK').then(() => {
+						next()
+					})
 				}
 			}
 		},

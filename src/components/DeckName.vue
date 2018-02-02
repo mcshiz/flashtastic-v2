@@ -2,7 +2,7 @@
 	<div class="row mb-4">
 		<div class="col-9">
 			<div class="deck-title h-100"  data-toggle="modal" data-target="#deckModal">
-				{{deck.name}}
+				{{name}}
 			</div>
 		</div>
 		<div class="col-3 align-self-end">
@@ -16,7 +16,7 @@
 <script>
 export default {
 	name: 'deck-name',
-	props: ['deck']
+	props: ['name']
 }
 </script>
 

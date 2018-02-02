@@ -1,142 +1,172 @@
 <template>
-	<div>
-		<nameDeckModal :newDeckName="deck.name" :saveDeckName="saveEditName"></nameDeckModal>
+	<div class="content">
+		<nameDeckModal :name="workingDeck.name" :saveDeckName="saveDeckName"></nameDeckModal>
 		<div class="row">
-			<h1 class="col">Edit</h1>
+			<h1 class="col">Edit Deck</h1>
 		</div>
-		<deck-name :deck="deck"></deck-name>
+		<deck-name :name="workingDeck.name"></deck-name>
 		<div class="row">
 			<deck-tagging></deck-tagging>
-			<deck-permissions :deckPermissions="deck.deckPermissions" :save="saveEditPermissions"></deck-permissions>
+			<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
 		</div>
 		<div class="row">
-			<newCardsList :cards="deck.questions" :delete="deleteCard" :save="saveEdits"></newCardsList>
+			<newCardsList :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></newCardsList>
 		</div>
-		<div class="row new-question-container mt-4">
+		<div class="row new-question-container">
 			<div class="col-12">
 				<h4 class="text-left">Add a new question</h4>
 			</div>
 			<div class="col-12 col-sm-5 text-center mb-4">
-				<new-question-answer-fields :field="'questionImage'" :type="newQuestionType" :loading="questionImageLoading" v-model="newQuestion" :upload="uploadImage"></new-question-answer-fields>
+				<new-question-answer-fields :field="'question'" :card="newCard" @update-value="update"></new-question-answer-fields>
 			</div>
 			<div class="col-12 col-sm-5 text-center mb-4">
-				<new-question-answer-fields :field="'answerImage'" :type="newAnswerType" :loading="answerImageLoading" v-model="newAnswer" :upload="uploadImage"></new-question-answer-fields>
+				<new-question-answer-fields :field="'answer'" :card="newCard" @update-value="update"></new-question-answer-fields>
 			</div>
 			<div class="col-12 col-sm-2 mb-4">
 				<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
 				<button class="btn ripple btn-secondary" v-on:click="clearCard">Clear</button>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-12 justify-content-sm-between">
+				<button class="btn ripple btn-danger" v-on:click="cancel">Cancel</button>
+				<button class="btn ripple btn-primary" v-on:click="updateDeck">Save Deck</button>
+			</div>
+		</div>
 	</div>
 </template>
+
 <script>
-import { mapState } from 'vuex'
-import newCardsList from './NewCardsList'
-import DeckName from './DeckName'
-import DeckTagging from './DeckTagging'
-import DeckPermissions from './DeckPermissions'
+import NewCardsList from './NewCardsList'
 import NameDeckModal from './NameDeckModal'
-import NewCardForm from './NewCardForm'
-import ImageTools from '../assets/ImageTools'
+import $ from 'jquery'
+import {mapState} from 'vuex'
 import NewQuestionAnswerFields from './NewQuestionAnswerFields'
+import ImageTools from '../assets/ImageTools'
+import DeckName from './DeckName'
+import DeckPermissions from './DeckPermissions'
+import DeckTagging from './DeckTagging'
+
+class Card {
+	constructor() {
+		this.question = ''
+		this.answer = ''
+		this.questionType = 'text'
+		this.answerType = 'text'
+	}
+}
+
 export default {
-	name: 'Editdeck',
+	name: 'NewCard',
 	data() {
 		return {
-			newQuestion: '',
-			newAnswer: '',
-			newQuestionType: 'text',
-			newAnswerType: 'text',
-			deckPermissions: 'private',
-			questionImageLoading: false,
-			answerImageLoading: false,
-			editing: false
-		}
-	},
-	methods: {
-		addCard: function() {
-			console.log('adding....')
-		},
-		clearCard: function() {
-			console.log('clearing...')
-		},
-		saveEditPermissions: function(permissions) {
-			let editedDeck = Object.assign({}, this.deck, {deckPermissions: permissions})
-			this.$store.dispatch('CHANGE_DECK_PERMISSIONS', editedDeck).then(() => {
-				console.log('loading', permissions)
-				this.$store.dispatch('LOAD_DECK_BY_KEY', {key: this.deck.key, deckPermissions: permissions})
-			})
-		},
-		saveEditName: function(name) {
-			let editedDeck = Object.assign({}, this.deck, {name: name})
-			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
-		},
-		saveEdits: function(card) {
-			let editedQuestions = Object.assign({}, this.deck.questions, {[card.index]: card.card})
-			let editedDeck = Object.assign({}, this.deck, {questions: editedQuestions})
-			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
-		},
-		deleteCard: function(index) {
-			if(Object.keys(this.deck.questions).length === 0) {
-				this.$store.dispatch('SHOW_ERROR', 'You cannot delete all of the cards in this deck')
-				return
-			}
-			let myKey = Object.keys(this.deck.questions)[index]
-			let editedQuestions = Object.keys(this.deck.questions)
-				.filter(key => key !== myKey)
-				.reduce((result, current) => {
-					result[current] = this.deck.questions[current]
-					return result
-				}, {})
-			let editedDeck = Object.assign({}, this.deck, {questions: editedQuestions})
-			this.$store.dispatch('SAVE_EDITS_BY_KEY', editedDeck)
-		},
-		uploadImage: function(e, field) {
-			let file = e.target.files[0]
-			let reader = new FileReader()
-			if(field === 'questionImage') {
-				this.newQuestionType = 'image'
-				this.questionImageLoading = true
-			} else if (field === 'answerImage') {
-				this.newAnswerType = 'image'
-				this.answerImageLoading = true
-			} else {
-				console.log('Image Field Not Specified')
-				return false
-			}
-			file.src = reader.result
-			ImageTools.resize(file, {
-				width: 810, // maximum width
-				height: 375 // maximum height
-			}, (blob, didItResize) => {
-				this.$store.dispatch('UPLOAD_IMAGE', blob).then((response) => {
-					if(field === 'questionImage') {
-						this.newQuestion = response.downloadURL
-						this.questionImageLoading = false
-					} else {
-						this.newAnswer = response.downloadURL
-						this.answerImageLoading = false
-					}
-				}).catch(error => [
-					console.log('err', error)
-				])
-			})
+			newCard: new Card(),
+			isDirty: false
 		}
 	},
 	computed: {
-		...mapState(['selectedDeck']),
-		deck: function() {
-			return Object.assign({}, this.selectedDeck)
+		...mapState(['workingDeck', 'authenticated'])
+	},
+	beforeRouteLeave(to, from, next) {
+		if (this.isDirty) {
+			if (confirm('Leaving will discard any changes')) {
+				this.resetDeck()
+				next()
+			}
+		} else {
+			next()
+		}
+	},
+
+	methods: {
+		// ugh
+		update: function (e, field) {
+			if (field === 'question') {
+				this.newCard.question = e
+			} else if (field === 'answer') {
+				this.newCard.answer = e
+			}
+			this.isDirty = true
+		},
+		saveDeckPermissions: function (permissions) {
+			let tmp = Object.assign({}, this.workingDeck, {permissions: permissions})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+		},
+		saveDeckName: function (name) {
+			let tmp = Object.assign({}, this.workingDeck, {name: name})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+		},
+		deleteCard: function (index) {
+			if(Object.keys(this.workingDeck.cards).length === 1) {
+				this.$store.dispatch('SHOW_ERROR', 'You cannot delete all of the questions')
+				return
+			}
+			let cards = Object.keys(this.workingDeck.cards).reduce((obj, key) => {
+				if (key !== index) {
+					obj[key] = this.workingDeck.cards[key]
+				}
+				return obj
+			}, {})
+			let tmp = Object.assign({}, this.workingDeck, {cards: cards})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+		},
+		saveCardEdits: function (card, key) {
+			console.log('se', card)
+			let tmp = Object.assign({}, this.workingDeck, {
+				cards: {
+					...this.workingDeck.cards,
+					[key]: card
+				}
+			})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+		},
+		addCard: function () {
+			if ((this.newCard.question === '' && this.newCard.questionType === 'text') || (this.newCard.answer === '' && this.newCard.answerType === 'text')) {
+				this.$store.dispatch('SHOW_ERROR', 'Both question and answer must be entered')
+				return
+			}
+			let key = Object.keys(this.workingDeck.cards).length
+			let tmp = Object.assign({}, this.workingDeck, {
+				cards: {
+					...this.workingDeck.cards,
+					[key]: this.newCard
+				}
+			})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			this.newCard = new Card()
+		},
+		clearCard: function () {
+			this.newCard = new Card()
+		},
+		cancel: function () {
+			this.$router.push({name: 'Home'})
+		},
+		updateDeck: function () {
+			if (!Object.keys(this.workingDeck.cards).length) {
+				this.$store.dispatch('SHOW_ERROR', 'You must first add questions and answers')
+				return
+			}
+			if (this.workingDeck.name === '') {
+				$('#deckModal').modal({
+					keyboard: false,
+					backdrop: 'static'
+				})
+				return
+			}
+			this.isDirty = false
+			this.$store.dispatch('UPDATE_DECK')
 		}
 	},
 	components: {
-		NewQuestionAnswerFields,
-		NewCardForm,
-		newCardsList,
-		DeckName,
 		DeckTagging,
 		DeckPermissions,
-		NameDeckModal
+		DeckName,
+		NewQuestionAnswerFields,
+		'newCardsList': NewCardsList,
+		'nameDeckModal': NameDeckModal
 	}
+
 }
 </script>
+<style>
+</style>
