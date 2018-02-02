@@ -43,7 +43,6 @@ export default new Vuex.Store({
 					} else {
 						user = {}
 						authd = false
-						reject(new Error('Could not sign in'))
 					}
 					commit('SET_AUTHENTICATED', {authd, user})
 					dispatch('LOAD_DECKS')
@@ -87,6 +86,7 @@ export default new Vuex.Store({
 					}
 				}
 				if(state.authenticated) {
+					console.log('YEA FUCKER')
 					let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
 					scoresRef.on('value', snapshot => {
 						for(let key in snapshot.val()) {

@@ -115,7 +115,6 @@ export default {
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
 		},
 		saveCardEdits: function(card, key) {
-			console.log('se', card)
 			let tmp = Object.assign({}, this.workingDeck, {cards: {
 				...this.workingDeck.cards,
 				[key]: card

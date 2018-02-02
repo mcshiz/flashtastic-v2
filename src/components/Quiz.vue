@@ -21,15 +21,6 @@
 			<button class='btn ripple btn-danger' v-on:click="reset()"><i class="fa fa-refresh" aria-hidden="true"></i>Reset</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-12 mb-2">
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-12">
-
-		</div>
-	</div>
 	<div class="modal fade" id="quizCompleteModal" tabindex="-1" role="dialog"  aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
@@ -61,7 +52,6 @@ export default {
 	data() {
 		return {
 			currentIndex: 0,
-			showAnswer: false,
 			scoreCards: {}
 		}
 	},
@@ -74,7 +64,7 @@ export default {
 		})
 	},
 	computed: {
-		...mapState(['workingDeck']),
+		...mapState(['workingDeck', 'authenticated']),
 		score: function() {
 			let correct = 0
 			let incorrect = 0
@@ -103,7 +93,6 @@ export default {
 		},
 		goToCardNumber: function(index) {
 			if(index >= 0 && index <= this.deckLength) {
-				this.showAnswer = false
 				this.currentIndex = index
 			}
 		},
@@ -115,7 +104,7 @@ export default {
 				if(this.scoreCards[key].result !== '') {
 					totalScored++
 				}
-				if(totalScored === this.deckLength) {
+				if(totalScored === this.deckLength && this.authenticated) {
 					this.$store.dispatch('SAVE_SCORE', this.score)
 					$('#quizCompleteModal').modal()
 				}
@@ -123,7 +112,6 @@ export default {
 		},
 		reset: function() {
 			this.currentIndex = 0
-			this.showAnswer = false
 			for(let key in this.scoreCards) {
 				this.scoreCards[key].result = ''
 			}

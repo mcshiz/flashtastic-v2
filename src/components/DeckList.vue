@@ -15,20 +15,20 @@
 							<br>
 							{{Object.keys(deck.cards).length}} Cards in Deck
 							<br>
-							<span v-if="deck.scores"
+							<span v-if="deck.scores && authenticated"
 									v-bind:class="{
 													'text-success': highScore(deck) / Object.keys(deck.cards).length === 1,
 													'text-warning': highScore(deck) / Object.keys(deck.cards).length >= 0.5 && highScore(deck) / Object.keys(deck.cards).length < 1,
 													'text-danger': highScore(deck) / Object.keys(deck.cards).length <= 0.5}">
 								High Score: <b>{{highScore(deck)}} / {{Object.keys(deck.cards).length}}</b>
 							</span>
-							<span v-else>Not Completed</span>
+							<span v-else-if="authenticated && !decks.scores">Not Completed</span>
 						</div>
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
 							<button class="btn btn-info btn-sm mb-1 col-12" v-on:click="loadDeck(deck, key)">Study</button>
 						</div>
 						<div v-if="(deck.permissions === 'private' || deck.creator === user.id)" class="col-2 col-sm-2 col-md-1 align-self-center">
-							<button class="btn btn-default btn-sm col-12" v-on:click="editDeck(key)">Edit</button>
+							<span v-on:click="editDeck(key)"><i class="fa fa-pencil"></i></span>
 							<span v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
 						</div>
 					</div>
@@ -72,7 +72,7 @@ export default {
 		}
 	},
 	computed: {
-		...mapState(['loadingDecks', 'user'])
+		...mapState(['loadingDecks', 'user', 'authenticated'])
 	}
 }
 </script>

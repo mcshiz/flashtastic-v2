@@ -58,7 +58,6 @@ export default {
 			}
 		},
 		saveEdits: function(card, key) {
-			console.log('ncl', card)
 			this.save(card, key)
 			$('#editModal').modal('hide')
 		}

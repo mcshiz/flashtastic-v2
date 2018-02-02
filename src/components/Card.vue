@@ -19,9 +19,9 @@
 			</div>
 		</div>
 		<div class="position-relative w-100 mt-3">
-			<button class='btn ripple btn-info card-nav pull-left' v-on:click="goToCardNumber(currentIndex - 1)" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
+			<button class='btn ripple btn-info card-nav pull-left' v-on:click="goToCard(currentIndex - 1)" :disabled="currentIndex === 0"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
 			<button class='btn ripple btn-secondary col-5' v-on:click="flipCard()">Flip Card</button>
-			<button class='btn ripple btn-info card-nav pull-right' v-on:click="goToCardNumber(currentIndex + 1)" :disabled="currentIndex + 1 === deckLength"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+			<button class='btn ripple btn-info card-nav pull-right' v-on:click="goToCard(currentIndex + 1)" :disabled="currentIndex + 1 === deckLength"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
 		</div>
 	</div>
 </template>
@@ -37,6 +37,10 @@ export default {
 	methods: {
 		flipCard: function() {
 			this.showAnswer = !this.showAnswer
+		},
+		goToCard: function(index) {
+			this.showAnswer = false
+			this.goToCardNumber(index)
 		}
 	},
 	computed: {
