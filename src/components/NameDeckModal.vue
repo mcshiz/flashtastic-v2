@@ -33,7 +33,6 @@ export default {
 	methods: {
 		save: function (e) {
 			e.preventDefault()
-			console.log('doing shit')
 			if (this.deckName === '') {
 				return false
 			}

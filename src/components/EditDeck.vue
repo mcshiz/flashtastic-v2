@@ -153,7 +153,9 @@ export default {
 				return
 			}
 			this.isDirty = false
-			this.$store.dispatch('UPDATE_DECK')
+			this.$store.dispatch('UPDATE_DECK').then(() => {
+				this.$store.dispatch('SHOW_SUCCESS', {message: 'Successfully Updated Deck', title: 'Success'})
+			})
 		}
 	},
 	components: {

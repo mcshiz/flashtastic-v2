@@ -21,7 +21,9 @@ export default new Vuex.Store({
 		privateDecks: {},
 		publicDecks: {},
 		loadingDecks: true,
-		errorMessage: ''
+		errorMessage: '',
+		successMessage: '',
+		successTitle: ''
 	},
 	actions: {
 		INITIALIZE: ({commit, dispatch}) => {
@@ -86,7 +88,6 @@ export default new Vuex.Store({
 					}
 				}
 				if(state.authenticated) {
-					console.log('YEA FUCKER')
 					let scoresRef = fire.database().ref(`${state.user.scoreRef}`)
 					scoresRef.on('value', snapshot => {
 						for(let key in snapshot.val()) {
@@ -188,9 +189,19 @@ export default new Vuex.Store({
 		},
 		RESET_ERROR: ({ commit }) => {
 			commit('SET_ERROR_MESSAGE', '')
+		},
+		SHOW_SUCCESS: ({ commit }, {message, title}) => {
+			commit('SET_SUCCESS_MESSAGE', {message, title})
+		},
+		RESET_SUCCESS: ({ commit }) => {
+			commit('SET_SUCCESS_MESSAGE', {message: '', title: ''})
 		}
 	},
 	mutations: {
+		SET_SUCCESS_MESSAGE: (state, {message, title}) => {
+			state.successMessage = message
+			state.successTitle = title
+		},
 		SET_LOADED_DECKS: (state, decks) => {
 			state.privateDecks = Object.assign({}, decks.private)
 			state.publicDecks = Object.assign({}, decks.public)
@@ -222,7 +233,5 @@ export default new Vuex.Store({
 		SET_RESET: (state) => {
 			state.newDeck = Object.assign({}, new BlankDeck(state))
 		}
-	},
-	getters: {
 	}
 })

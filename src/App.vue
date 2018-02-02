@@ -4,6 +4,7 @@
 			<div class="main container clear-top">
 				<router-view/>
 				<error-modal/>
+				<success-modal/>
 			</div>
 		</div>
 		<nav-bar />
@@ -12,10 +13,12 @@
 <script>
 import Navigation from './components/Navigation'
 import ErrorModal from './components/ErrorModal'
+import SuccessModal from './components/SuccessModal'
 export default {
 	name: 'App',
 	components: {
 		'error-modal': ErrorModal,
+		'success-modal': SuccessModal,
 		'nav-bar': Navigation
 	}
 }
