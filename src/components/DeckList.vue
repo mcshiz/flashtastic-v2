@@ -25,7 +25,7 @@
 							<span v-else-if="authenticated && !decks.scores">Not Completed</span>
 						</div>
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
-							<button class="btn btn-info btn-sm mb-1 col-12" v-on:click="loadDeck(deck, key)">Study</button>
+							<button class="btn btn-info btn-sm mb-1" v-on:click="loadDeck(deck, key)">Study</button>
 						</div>
 						<div v-if="(deck.permissions === 'private' || deck.creator === user.id)" class="col-2 col-sm-2 col-md-1 align-self-center">
 							<span v-on:click="editDeck(key)"><i class="fa fa-pencil"></i></span>
