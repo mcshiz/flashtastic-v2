@@ -9,12 +9,12 @@
 		<div class="col-12 col-md-10 col-lg-6">
 			<ul class="row scoreCards justify-content-center mb-0">
 				<li @click="goToCardNumber(index)" v-for="(card, index) in scoreCards" v-bind:key="index"  v-bind:class="{'active': currentIndex === index, 'm-2': true}">
-						<div v-if="card.result === 'correct'" ><i class="text-success fa fa-check align-self-center"></i></div>
-						<div v-else-if="card.result === 'incorrect'"><i class=" text-danger fa fa-close align-self-center"></i></div>
-						<div v-else></div>
+					<div v-if="card.result === 'correct'" ><i class="text-success fa fa-check align-self-center"></i></div>
+					<div v-else-if="card.result === 'incorrect'"><i class=" text-danger fa fa-close align-self-center"></i></div>
+					<div v-else></div>
 				</li>
 			</ul>
-			<card :cards="workingDeck.cards" :currentIndex="currentIndex" :markScore="markScore" :goToCardNumber="goToCardNumber"></card>
+			<card :cards="workingDeck.cards" :currentIndex="currentIndex" :currentKey="currentKey" :markScore="markScore" :goToCardNumber="goToCardNumber"></card>
 		</div>
 		<div class="col-12 col-md-2">
 			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}" :scores="workingDeck.scores"></score>
@@ -78,13 +78,9 @@ export default {
 		deckLength: function() {
 			return Object.keys(this.workingDeck.cards).length
 		},
-		currentCard: function() {
-			return Object.keys(this.workingDeck.cards)[this.currentIndex]
-		},
-		deckKey: function() {
+		currentKey: function() {
 			return Object.keys(this.workingDeck.cards)[this.currentIndex]
 		}
-
 	},
 	methods: {
 		goToDeckList: function() {
@@ -92,7 +88,7 @@ export default {
 			this.$router.push({name: 'Home'})
 		},
 		goToCardNumber: function(index) {
-			if(index >= 0 && index <= this.deckLength) {
+			if(Object.keys(this.workingDeck.cards)[index] !== 'undefined') {
 				this.currentIndex = index
 			}
 		},

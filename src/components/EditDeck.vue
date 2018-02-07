@@ -10,9 +10,9 @@
 			<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
 		</div>
 		<div class="row">
-			<newCardsList :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></newCardsList>
+			<newCardsList v-if="workingDeck.cards" :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></newCardsList>
 		</div>
-		<div class="row new-question-container">
+		<div class="row new-question-container mt-4">
 			<div class="col-12">
 				<h4 class="text-left">Add a new question</h4>
 			</div>
@@ -80,11 +80,15 @@ export default {
 
 	methods: {
 		// ugh
-		update: function (e, field) {
-			if (field === 'question') {
-				this.newCard.question = e
+		update: function(value, field) {
+			if(field === 'question') {
+				this.newCard.question = value
 			} else if (field === 'answer') {
-				this.newCard.answer = e
+				this.newCard.answer = value
+			} else if(field === 'questionType') {
+				this.newCard.questionType = value
+			} else if(field === 'answerType') {
+				this.newCard.answerType = value
 			}
 			this.isDirty = true
 		},
@@ -108,7 +112,9 @@ export default {
 				return obj
 			}, {})
 			let tmp = Object.assign({}, this.workingDeck, {cards: cards})
-			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			this.$store.dispatch('DELETE_CARD', index).then(() => {
+				this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			})
 		},
 		saveCardEdits: function (card, key) {
 			let tmp = Object.assign({}, this.workingDeck, {
@@ -124,7 +130,7 @@ export default {
 				this.$store.dispatch('SHOW_ERROR', 'Both question and answer must be entered')
 				return
 			}
-			let key = Object.keys(this.workingDeck.cards).length
+			let key = Math.random().toString(36).substr(2, 10)
 			let tmp = Object.assign({}, this.workingDeck, {
 				cards: {
 					...this.workingDeck.cards,

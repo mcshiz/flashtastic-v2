@@ -3,7 +3,7 @@
 		<editCardModal :card="card" :cardKey="key" :save="saveEdits" :uploadImage="upload"></editCardModal>
 		<ul class="list-group">
 			<li v-for='(card, key) in cards' :key='`question-${key}`' class="list-group-item">
-				<div class="row text-left">
+				<div class="row text-left" v-if="card">
 					<div class="col-12 col-sm-5 col-md-4 align-self-center">
 						<b class="new-question-label">Question:</b>
 						<span v-if="card.questionType === 'image'" >
@@ -54,6 +54,7 @@ export default {
 		},
 		deleteCard: function(index) {
 			if(window.confirm('Are you sure you want to delete this question?')) {
+
 				this.delete(index)
 			}
 		},

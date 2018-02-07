@@ -132,6 +132,14 @@ export default new Vuex.Store({
 				})
 			})
 		},
+		DELETE_CARD: ({commit, state}, index) => {
+			return new Promise((resolve, reject) => {
+				let decksRef = fire.database().ref(`decks/${state.workingDeck.key}`)
+				decksRef.child('cards').child(index).remove().then(() => {
+					resolve()
+				})
+			})
+		},
 		UPDATE_WORKING_DECK_IN_STATE: ({ commit }, deck) => {
 			commit('SET_WORKING_DECK', deck)
 		},

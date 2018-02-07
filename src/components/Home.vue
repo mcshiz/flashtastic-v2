@@ -11,12 +11,12 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-12" v-if="authenticated">
+			<div class="col-12 mb-2" v-if="authenticated">
 				<my-deck-list :decks="privateDecks"></my-deck-list>
 			</div>
 			<div class="col-12" v-if="authenticated"><hr></div>
 			<div class="col-12" v-else>Login to create private decks and track your scores <auth-buttons></auth-buttons>	</div>
-			<div class="col-12"><h2>Public Decks</h2></div>
+			<div class="col-12 mt-2"><h2>Public Decks</h2></div>
 			<div class="col-12"><public-deck-list :decks="publicDecks"></public-deck-list></div>
 		</div>
 	</div>

@@ -27,7 +27,7 @@
 						<div class="col-4 col-sm-2 col-md-1 pull-right align-self-center">
 							<button class="btn btn-info btn-sm mb-1" v-on:click="loadDeck(deck, key)">Study</button>
 						</div>
-						<div v-if="(deck.permissions === 'private' || deck.creator === user.id)" class="col-2 col-sm-2 col-md-1 align-self-center">
+						<div v-if="(deck.creator === user.id)" class="col-2 col-sm-2 col-md-1 align-self-center">
 							<span v-on:click="editDeck(key)"><i class="fa fa-pencil"></i></span>
 							<span v-on:click="deleteDeck(key)" class="delete-deck"><i class="fa fa-trash"></i></span>
 						</div>

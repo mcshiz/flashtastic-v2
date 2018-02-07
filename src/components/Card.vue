@@ -28,7 +28,7 @@
 <script>
 export default {
 	name: 'Card',
-	props: ['cards', 'markScore', 'currentIndex', 'goToCardNumber'],
+	props: ['cards', 'markScore', 'currentIndex', 'currentKey', 'goToCardNumber'],
 	data() {
 		return {
 			showAnswer: false
@@ -45,7 +45,7 @@ export default {
 	},
 	computed: {
 		currentCard: function() {
-			return this.cards[this.currentIndex]
+			return this.cards[this.currentKey]
 		},
 		deckLength: function() {
 			return Object.keys(this.cards).length
