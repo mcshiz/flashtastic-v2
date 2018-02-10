@@ -43,7 +43,7 @@ export default new Router({
 			props: true,
 			beforeEnter(to, from, next) {
 				Store.dispatch('LOAD_DECK_BY_KEY', {key: to.params.key, permissions: to.params.permissions}).then(() => {
-					if(Store.state.user.id === Store.state.workingDeck.creator) {
+					if(Store.state.user.id === Store.state.workingDeck.creator || Store.state.workingDeck.permissions === 'public') {
 						next()
 					} else {
 						next({name: 'Home'})

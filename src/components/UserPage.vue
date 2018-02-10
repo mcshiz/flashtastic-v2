@@ -7,9 +7,15 @@
 				</h2>
 			</div>
 		</div>
+		<div class="row mb-2">
+			<div class="col"></div>
+			<div class="col-12 col-sm-4 push-right">
+				<input type="text" class="form-control input-group-sm" placeholder="Filter by tags" v-model="filterValue">
+			</div>
+		</div>
 		<div class="row mb-5">
 			<div class="col-12">
-				<my-deck-list v-if="authenticated" :decks="privateDecks"></my-deck-list>
+				<my-deck-list v-if="authenticated" :decks="privateDecks" :filter="filterValue"></my-deck-list>
 			</div>
 		</div>
 		<div class="row">
@@ -33,6 +39,11 @@ export default {
 	components: {
 		'my-deck-list': DeckList,
 		'auth-buttons': AuthButtons
+	},
+	data() {
+		return {
+			filterValue: ''
+		}
 	}
 }
 </script>

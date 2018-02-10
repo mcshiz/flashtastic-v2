@@ -6,7 +6,7 @@
 		</div>
 		<deck-name :name="workingDeck.name"></deck-name>
 		<div class="row">
-			<deck-tagging></deck-tagging>
+			<deck-tagging :tags="workingDeck.tags" @update-tags="updateTags"></deck-tagging>
 			<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
 		</div>
 		<div class="row">
@@ -40,13 +40,12 @@
 import NewCardsList from './NewCardsList'
 import NameDeckModal from './NameDeckModal'
 import $ from 'jquery'
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 import NewQuestionAnswerFields from './NewQuestionAnswerFields'
 import ImageTools from '../assets/ImageTools'
 import DeckName from './DeckName'
 import DeckPermissions from './DeckPermissions'
 import DeckTagging from './DeckTagging'
-
 class Card {
 	constructor() {
 		this.question = ''
@@ -55,7 +54,6 @@ class Card {
 		this.answerType = 'text'
 	}
 }
-
 export default {
 	name: 'NewCard',
 	data() {
@@ -68,8 +66,8 @@ export default {
 		...mapState(['workingDeck', 'authenticated'])
 	},
 	beforeRouteLeave(to, from, next) {
-		if (this.isDirty) {
-			if (confirm('Leaving will discard any changes')) {
+		if(this.isDirty) {
+			if(confirm('Leaving will discard any changes')) {
 				this.resetDeck()
 				next()
 			}
@@ -79,6 +77,11 @@ export default {
 	},
 
 	methods: {
+		updateTags: function(tags) {
+			let tmp = Object.assign({}, this.workingDeck, {tags: tags})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			this.isDirty = true
+		},
 		// ugh
 		update: function(value, field) {
 			if(field === 'question') {
@@ -92,11 +95,11 @@ export default {
 			}
 			this.isDirty = true
 		},
-		saveDeckPermissions: function (permissions) {
+		saveDeckPermissions: function(permissions) {
 			let tmp = Object.assign({}, this.workingDeck, {permissions: permissions})
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
 		},
-		saveDeckName: function (name) {
+		saveDeckName: function(name) {
 			let tmp = Object.assign({}, this.workingDeck, {name: name})
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
 		},

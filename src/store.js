@@ -11,6 +11,7 @@ class BlankDeck {
 		this.key = ''
 		this.permissions = 'private'
 		this.creator = state.user.id
+		this.tags = ''
 	}
 }
 export default new Vuex.Store({
@@ -149,9 +150,15 @@ export default new Vuex.Store({
 				// Firebase.storage().ref().child(`${state.user.storageRef}/${key}`).delete() doesnt work
 				// because we need to specify a ref all the way down to the exact filename
 				fire.database().ref(`/decks/${key}`).remove().then(() => {
-					fire.database().ref(`/decks/${key}`).remove().then(() => {
-						resolve()
-					})
+					let publicDecks = Object.assign({}, state.publicDecks)
+					let privateDecks = Object.assign({}, state.privateDecks)
+					if(state.privateDecks.hasOwnProperty(key)) {
+						delete privateDecks[key]
+					} else if (state.publicDecks.hasOwnProperty(key)) {
+						delete publicDecks[key]
+					}
+					commit('SET_LOADED_DECKS', {'private': privateDecks, 'public': publicDecks})
+					resolve()
 				})
 			})
 		},

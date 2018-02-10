@@ -1,23 +1,32 @@
 <template>
 	<div class='content'>
 		<div class="row">
-			<div class="col">
+			<div class="col-12">
 				<h1>FlashTastic</h1>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row mb-2" v-if="authenticated">
+			<div class="col"></div>
 			<div class="col">
 				<h2>My Decks</h2>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-12 mb-2" v-if="authenticated">
-				<my-deck-list :decks="privateDecks"></my-deck-list>
+			<div class="col">
+				<input type="text" class="form-control input-group-sm" placeholder="Filter by tags" v-model="filterValue">
 			</div>
-			<div class="col-12" v-if="authenticated"><hr></div>
-			<div class="col-12" v-else>Login to create private decks and track your scores <auth-buttons></auth-buttons>	</div>
-			<div class="col-12 mt-2"><h2>Public Decks</h2></div>
-			<div class="col-12"><public-deck-list :decks="publicDecks"></public-deck-list></div>
+			<div class="col-12">
+				<my-deck-list :decks="privateDecks" :filter="filterValue"></my-deck-list>
+				<hr>
+			</div>
+		</div>
+		<div class="row mb-4" v-else>
+			<div class="col-12">Login to create private decks and track your scores</div>
+			<div class="col-12"><auth-buttons></auth-buttons></div>
+		</div>
+		<div class="row mt-2">
+			<div class="col-12"><h2>Public Decks</h2></div>
+			<div class="col-12">
+				<public-deck-list :decks="publicDecks" :filter="filterValue"></public-deck-list>
+			</div>
 		</div>
 	</div>
 </template>
@@ -37,7 +46,9 @@ export default {
 		...mapState(['privateDecks', 'publicDecks', 'authenticated', 'user'])
 	},
 	data() {
-		return {}
+		return {
+			filterValue: ''
+		}
 	}
 }
 </script>

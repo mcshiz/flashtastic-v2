@@ -6,13 +6,13 @@
 			</div>
 			<deck-name :name="workingDeck.name"></deck-name>
 			<div class="row">
-				<deck-tagging></deck-tagging>
+				<deck-tagging :tags="workingDeck.tags" @update-tags="updateTags"></deck-tagging>
 				<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
 			</div>
 			<div class="row">
 				<newCardsList :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></newCardsList>
 			</div>
-			<div class="row new-question-container">
+			<div class="row new-question-container mt-4">
 				<div class="col-12">
 					<h4 class="text-left">Add a new question</h4>
 				</div>
@@ -83,6 +83,12 @@ export default {
 		}
 	},
 	methods: {
+		updateTags: function(tags) {
+			console.log('updating tags!', tags)
+			let tmp = Object.assign({}, this.workingDeck, {tags: tags})
+			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			this.isDirty = true
+		},
 		// ugh
 		update: function(value, field) {
 			if(field === 'question') {
@@ -115,6 +121,7 @@ export default {
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
 		},
 		saveCardEdits: function(card, key) {
+			console.log('se', card)
 			let tmp = Object.assign({}, this.workingDeck, {cards: {
 				...this.workingDeck.cards,
 				[key]: card
