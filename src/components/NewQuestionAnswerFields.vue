@@ -11,6 +11,7 @@
 	<div style="height:0;overflow:hidden;display:none">
 		<input type="file" :id="side.id" name="fileInput" v-on:change="(event) => { uploadImage(event) }"/>
 	</div>
+	<small class="text-muted text-left form-text">Upload Images, Paste Image Links, or Use Plain Text</small>
 </div>
 </template>
 
