@@ -6,7 +6,7 @@
 				<div class="row text-left" v-if="card">
 					<div class="col-12 col-sm-5 col-md-4 align-self-center">
 						<b class="new-question-label">Question:</b>
-						<span v-if="card.questionType === 'image'" >
+						<span v-if="isImage(card.question, card.questionType)" >
 							<br>
 							<img :src="card.question" alt="" height="200" width="200">
 						</span>
@@ -14,7 +14,7 @@
 					</div>
 					<div class="col-12 col-sm-5 col-md-4 align-self-center">
 						<b class="new-question-label">Answer:</b>
-						<span v-if="card.answerType === 'image'">
+						<span v-if="isImage(card.answer, card.answerType)">
 							<br>
 							<img :src="card.answer" alt="" height="200" width="200">
 						</span>
@@ -47,6 +47,13 @@ export default {
 		'editCardModal': EditCardModal
 	},
 	methods: {
+		isImage: function(text, type) {
+			if(text.match(/\.(jpg|jpeg|gif|png)$/) != null || type === 'image') {
+				return true
+			} else {
+				return false
+			}
+		},
 		editCard: function(card, key) {
 			this.card = card
 			this.key = key

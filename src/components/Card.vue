@@ -6,7 +6,7 @@
 					<button class="btn ripple btn-success score correct" v-on:click="markScore('correct')" :disabled="currentCard.result === 'correct'"><i class="fa fa-check" aria-hidden="true"></i></button>
 					<button class="btn ripple btn-warning score incorrect" v-on:click="markScore('incorrect')" :disabled="currentCard.result === 'incorrect'"><i class="fa fa-times" aria-hidden="true"></i></button>
 				</div>
-				<img v-if="currentCard.questionType === 'image'" :src="currentCard.question" alt="" class="card-image align-self-end">
+				<img v-if="isImage(currentCard.question, currentCard.questionType)" :src="currentCard.question" alt="" class="card-image align-self-end">
 				<div v-else>{{currentCard.question}}</div>
 			</div>
 			<div class="back">
@@ -14,7 +14,7 @@
 					<button class="btn ripple btn-success score correct" v-on:click="markScore('correct')" :disabled="currentCard.result === 'correct'"><i class="fa fa-check" aria-hidden="true"></i></button>
 					<button class="btn ripple btn-warning score incorrect" v-on:click="markScore('incorrect')" :disabled="currentCard.result === 'incorrect'"><i class="fa fa-times" aria-hidden="true"></i></button>
 				</div>
-				<img v-if="currentCard.answerType === 'image' && showAnswer" :src="currentCard.answer" alt="" class="card-image align-self-end">
+				<img v-if="isImage(currentCard.answer, currentCard.answerType) && showAnswer" :src="currentCard.answer" alt="" class="card-image align-self-end">
 				<div v-else-if="currentCard.answerType === 'text' && showAnswer">{{currentCard.answer}}</div>
 			</div>
 		</div>
@@ -28,19 +28,21 @@
 <script>
 export default {
 	name: 'Card',
-	props: ['cards', 'markScore', 'currentIndex', 'currentKey', 'goToCardNumber'],
-	data() {
-		return {
-			showAnswer: false
-		}
-	},
+	props: ['cards', 'markScore', 'currentIndex', 'currentKey', 'goToCardNumber', 'showAnswer'],
 	methods: {
 		flipCard: function() {
-			this.showAnswer = !this.showAnswer
+			this.$emit('flip-card', !this.showAnswer)
 		},
 		goToCard: function(index) {
 			this.showAnswer = false
 			this.goToCardNumber(index)
+		},
+		isImage: function(text, type) {
+			if(text.match(/\.(jpg|jpeg|gif|png)$/) != null || type === 'image') {
+				return true
+			} else {
+				return false
+			}
 		}
 	},
 	computed: {
