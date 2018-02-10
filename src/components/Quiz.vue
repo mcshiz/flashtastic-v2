@@ -14,7 +14,7 @@
 					<div v-else></div>
 				</li>
 			</ul>
-			<card :cards="workingDeck.cards" :currentIndex="currentIndex" :currentKey="currentKey" :markScore="markScore" :goToCardNumber="goToCardNumber"></card>
+			<card :cards="workingDeck.cards" :currentIndex="currentIndex" :currentKey="currentKey" :markScore="markScore" :goToCardNumber="goToCardNumber" :showAnswer="showAnswer" @flip-card="flipCard"></card>
 		</div>
 		<div class="col-12 col-md-2">
 			<score v-bind:score="{correct: score.correct, incorrect: score.incorrect}" :scores="workingDeck.scores"></score>
@@ -51,6 +51,7 @@ export default {
 	props: ['id', 'name', 'deck'],
 	data() {
 		return {
+			showAnswer: false,
 			currentIndex: 0,
 			scoreCards: {}
 		}
@@ -83,6 +84,9 @@ export default {
 		}
 	},
 	methods: {
+		flipCard: function(value) {
+			this.showAnswer = value
+		},
 		goToDeckList: function() {
 			$('#quizCompleteModal').modal('hide')
 			this.$router.push({name: 'Home'})
@@ -113,7 +117,7 @@ export default {
 			}
 			this.score.correct = 0
 			this.score.incorrect = 0
-			this.$forceUpdate()
+			this.showAnswer = false
 			$('#quizCompleteModal').modal('hide')
 		}
 	},
