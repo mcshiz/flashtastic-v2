@@ -18,6 +18,7 @@
 				<hr>
 			</div>
 		</div>
+		<!-- If not authenticated -->
 		<div class="row mb-4" v-else>
 			<div class="col-12">Login to create private decks and track your scores</div>
 			<div class="col-12"><auth-buttons></auth-buttons></div>

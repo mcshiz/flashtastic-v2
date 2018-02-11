@@ -7,9 +7,9 @@
 				</div>
 				<div class="modal-body text-left">
 					<div class="col-12 text-center mb-4">
-						<new-question-answer-fields :field="'question'" :card="editingCard" @update-value="update"></new-question-answer-fields>
+						<new-question-answer-fields :field="'question'" :card="editingCard" @update-card="updateExistingCard"></new-question-answer-fields>
 						<br>
-						<new-question-answer-fields :field="'answer'" :card="editingCard" @update-value="update" ></new-question-answer-fields>
+						<new-question-answer-fields :field="'answer'" :card="editingCard" @update-card="updateExistingCard"></new-question-answer-fields>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -38,20 +38,11 @@ export default {
 		}
 	},
 	components: {
-		'new-question-answer-fields': NewQuestionAnswerFields
+		NewQuestionAnswerFields
 	},
 	methods: {
-		// ugh
-		update: function(value, field) {
-			if(field === 'question') {
-				this.editingCard.question = value
-			} else if (field === 'answer') {
-				this.editingCard.answer = value
-			} else if(field === 'questionType') {
-				this.editingCard.questionType = value
-			} else if(field === 'answerType') {
-				this.editingCard.answerType = value
-			}
+		updateExistingCard: function(obj) {
+			this.editingCard[obj.field] = obj.value
 		}
 	}
 }

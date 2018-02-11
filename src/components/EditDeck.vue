@@ -1,31 +1,19 @@
 <template>
-	<div class="content">
-		<nameDeckModal :name="workingDeck.name" :saveDeckName="saveDeckName"></nameDeckModal>
-		<div class="row">
-			<h1 class="col">Edit Deck</h1>
-		</div>
-		<deck-name :name="workingDeck.name"></deck-name>
-		<div class="row">
-			<deck-tagging :tags="workingDeck.tags" @update-tags="updateTags"></deck-tagging>
-			<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
-		</div>
-		<div class="row">
-			<newCardsList v-if="workingDeck.cards" :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></newCardsList>
-		</div>
-		<div class="row new-question-container mt-4">
-			<div class="col-12">
-				<h4 class="text-left">Add a new question</h4>
+		<div class="content">
+			<name-deck-modal :name="workingDeck.name" :saveDeckName="saveDeckName"></name-deck-modal>
+			<div class="row">
+				<h1 class="col">Create New Deck</h1>
 			</div>
-			<div class="col-12 col-sm-5 text-center mb-4">
-				<new-question-answer-fields :field="'question'" :card="newCard" @update-value="update"></new-question-answer-fields>
+			<deck-name :name="workingDeck.name"></deck-name>
+			<div class="row">
+				<deck-tagging :tags="workingDeck.tags" @update-tags="updateTags"></deck-tagging>
+				<deck-permissions :permissions="workingDeck.permissions" :save="saveDeckPermissions"></deck-permissions>
 			</div>
-			<div class="col-12 col-sm-5 text-center mb-4">
-				<new-question-answer-fields :field="'answer'" :card="newCard" @update-value="update"></new-question-answer-fields>
+			<div class="row">
+				<cards-list :cards="workingDeck.cards" :delete="deleteCard" :save="saveCardEdits"></cards-list>
 			</div>
-			<div class="col-12 col-sm-2 mb-4">
-				<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
-				<button class="btn ripple btn-secondary" v-on:click="clearCard">Clear</button>
-			</div>
+			<div class="row">
+			<add-new-card></add-new-card>
 		</div>
 		<div class="row">
 			<div class="col-12 justify-content-sm-between">
@@ -37,28 +25,20 @@
 </template>
 
 <script>
-import NewCardsList from './NewCardsList'
+import CardsList from './CardsList'
+import AddNewCard from './AddNewCard'
 import NameDeckModal from './NameDeckModal'
 import $ from 'jquery'
 import { mapState } from 'vuex'
 import NewQuestionAnswerFields from './NewQuestionAnswerFields'
-import ImageTools from '../assets/ImageTools'
 import DeckName from './DeckName'
 import DeckPermissions from './DeckPermissions'
 import DeckTagging from './DeckTagging'
-class Card {
-	constructor() {
-		this.question = ''
-		this.answer = ''
-		this.questionType = 'text'
-		this.answerType = 'text'
-	}
-}
+
 export default {
 	name: 'NewCard',
 	data() {
 		return {
-			newCard: new Card(),
 			isDirty: false
 		}
 	},
@@ -80,19 +60,6 @@ export default {
 		updateTags: function(tags) {
 			let tmp = Object.assign({}, this.workingDeck, {tags: tags})
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
-			this.isDirty = true
-		},
-		// ugh
-		update: function(value, field) {
-			if(field === 'question') {
-				this.newCard.question = value
-			} else if (field === 'answer') {
-				this.newCard.answer = value
-			} else if(field === 'questionType') {
-				this.newCard.questionType = value
-			} else if(field === 'answerType') {
-				this.newCard.answerType = value
-			}
 			this.isDirty = true
 		},
 		saveDeckPermissions: function(permissions) {
@@ -119,32 +86,12 @@ export default {
 				this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
 			})
 		},
-		saveCardEdits: function (card, key) {
-			let tmp = Object.assign({}, this.workingDeck, {
-				cards: {
-					...this.workingDeck.cards,
-					[key]: card
-				}
-			})
+		saveCardEdits: function(card, key) {
+			let tmp = Object.assign({}, this.workingDeck, {cards: {
+				...this.workingDeck.cards,
+				[key]: card
+			}})
 			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
-		},
-		addCard: function () {
-			if ((this.newCard.question === '' && this.newCard.questionType === 'text') || (this.newCard.answer === '' && this.newCard.answerType === 'text')) {
-				this.$store.dispatch('SHOW_ERROR', 'Both question and answer must be entered')
-				return
-			}
-			let key = Math.random().toString(36).substr(2, 10)
-			let tmp = Object.assign({}, this.workingDeck, {
-				cards: {
-					...this.workingDeck.cards,
-					[key]: this.newCard
-				}
-			})
-			this.$store.dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
-			this.newCard = new Card()
-		},
-		clearCard: function () {
-			this.newCard = new Card()
 		},
 		cancel: function () {
 			this.$router.push({name: 'Home'})
@@ -154,7 +101,7 @@ export default {
 				this.$store.dispatch('SHOW_ERROR', 'You must first add questions and answers')
 				return
 			}
-			if (this.workingDeck.name === '') {
+			if(this.workingDeck.name === '') {
 				$('#deckModal').modal({
 					keyboard: false,
 					backdrop: 'static'
@@ -168,12 +115,13 @@ export default {
 		}
 	},
 	components: {
+		AddNewCard,
 		DeckTagging,
 		DeckPermissions,
 		DeckName,
 		NewQuestionAnswerFields,
-		'newCardsList': NewCardsList,
-		'nameDeckModal': NameDeckModal
+		CardsList,
+		NameDeckModal
 	}
 
 }

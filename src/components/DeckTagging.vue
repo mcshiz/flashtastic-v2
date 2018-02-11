@@ -2,14 +2,14 @@
 	<div class="col-12 col-sm-6">
 		<div class="row">
 			<div class="col-12">
-				<input type="text" class="form-control tags" placeholder="Up to 5 comma separated tags" id="deck-tags" @input="(event) => update(event)">
+				<input type="text" class="form-control tags" placeholder="Up to 5 comma separated tags" id="deck-tags" v-on:keyup.188="(event) => update(event)" v-on:keyup.enter="(event) => update(event)">
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-12 mb-4 ml-3">
 				<div class="row">
 					<small v-if="!tagsArray.length" id="tagsHelp" class="form-text text-muted text-left">Tag this deck for easier finding later</small>
-					<div v-else v-for="(tag, index) in tagsArray" :key="index" class="tag col-auto mt-2 mr-2">{{tag}} <i class="fa fa-close" @click="removeTag(index)"></i></div>
+					<div v-else v-for="(tag, index) in tagsArray" :key="index" class="tag col-auto mt-2 mr-2 bg-info text-white">{{tag}} <i class="fa fa-close" @click="removeTag(index)"></i></div>
 				</div>
 			</div>
 		</div>
@@ -34,11 +34,9 @@ export default {
 			if(this.tagsArray.length === 5) {
 				return false
 			}
-			if(e.data === ',') {
-				this.tagsArray.push(e.target.value.replace(',', ''))
-				this.$emit('update-tags', this.tagsArray.join())
-				e.target.value = ''
-			}
+			this.tagsArray.push(e.target.value.replace(',', ''))
+			this.$emit('update-tags', this.tagsArray.join())
+			e.target.value = ''
 		},
 		removeTag: function(index) {
 			let tmp = this.tagsArray.slice(0, index).concat(this.tagsArray.slice(index + 1))

@@ -93,6 +93,7 @@ export default {
 		},
 		goToCardNumber: function(index) {
 			if(Object.keys(this.workingDeck.cards)[index] !== 'undefined') {
+				this.flipCard(false)
 				this.currentIndex = index
 			}
 		},

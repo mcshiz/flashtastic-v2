@@ -1,24 +1,16 @@
 <template>
 	<div class="col">
-		<editCardModal :card="card" :cardKey="key" :save="saveEdits" :uploadImage="upload"></editCardModal>
+		<editCardModal :card="card" :cardKey="key" :save="saveEdits"></editCardModal>
 		<ul class="list-group">
 			<li v-for='(card, key) in cards' :key='`question-${key}`' class="list-group-item">
 				<div class="row text-left" v-if="card">
 					<div class="col-12 col-sm-5 col-md-4 align-self-center">
-						<b class="new-question-label">Question:</b>
-						<span v-if="isImage(card.question, card.questionType)" >
-							<br>
-							<img :src="card.question" alt="" height="200" width="200">
-						</span>
-						<span v-else>{{card.question}}</span>
+						<b>Question:</b>
+						<cardField :text="card.question" :type="card.questionType"></cardField>
 					</div>
 					<div class="col-12 col-sm-5 col-md-4 align-self-center">
-						<b class="new-question-label">Answer:</b>
-						<span v-if="isImage(card.answer, card.answerType)">
-							<br>
-							<img :src="card.answer" alt="" height="200" width="200">
-						</span>
-						<span v-else>{{card.answer}}</span>
+						<b>Answer:</b>
+						<cardField :text="card.answer" :type="card.answerType"></cardField>
 					</div>
 					<div class="col-auto col-sm-1 col-md-2 mt-2 text-right align-self-center">
 						<button class="btn ripple btn-primary" v-on:click="editCard(card, key)">Edit</button>
@@ -33,6 +25,7 @@
 </template>
 <script>
 import EditCardModal from './EditCardModal'
+import CardField from './CardField'
 import $ from 'jquery'
 export default {
 	name: 'newCardList',
@@ -44,16 +37,10 @@ export default {
 		}
 	},
 	components: {
-		'editCardModal': EditCardModal
+		EditCardModal,
+		CardField
 	},
 	methods: {
-		isImage: function(text, type) {
-			if(text.match(/\.(jpg|jpeg|gif|png)$/) != null || type === 'image') {
-				return true
-			} else {
-				return false
-			}
-		},
 		editCard: function(card, key) {
 			this.card = card
 			this.key = key
@@ -61,7 +48,6 @@ export default {
 		},
 		deleteCard: function(index) {
 			if(window.confirm('Are you sure you want to delete this question?')) {
-
 				this.delete(index)
 			}
 		},

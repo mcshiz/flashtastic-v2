@@ -14,9 +14,18 @@ class BlankDeck {
 		this.tags = ''
 	}
 }
+class BlankCard {
+	constructor() {
+		this.question = ''
+		this.answer = ''
+		this.questionType = 'text'
+		this.answerType = 'text'
+	}
+}
 export default new Vuex.Store({
 	state: {
 		workingDeck: {},
+		blankCard: {},
 		authenticated: false,
 		user: {},
 		privateDecks: {},
@@ -48,6 +57,7 @@ export default new Vuex.Store({
 						authd = false
 					}
 					commit('SET_AUTHENTICATED', {authd, user})
+					dispatch('CREATE_BLANK_CARD')
 					dispatch('LOAD_DECKS')
 					resolve()
 				})
@@ -68,12 +78,16 @@ export default new Vuex.Store({
 				commit('SET_ERROR_MESSAGE', error)
 			})
 		},
-		CREATE_BLANK_DECK: ({commit, state}) => {
+		CREATE_BLANK_DECK: ({commit, state, dispatch}) => {
 			return new Promise((resolve, reject) => {
 				let newDeck = new BlankDeck(state)
 				commit('SET_WORKING_DECK', newDeck)
 				resolve()
 			})
+		},
+		CREATE_BLANK_CARD: ({commit}) => {
+			let newCard = new BlankCard()
+			commit('SET_BLANK_CARD', newCard)
 		},
 		LOAD_DECKS: ({ commit, state }) => {
 			let publicDecks = {}
@@ -124,6 +138,19 @@ export default new Vuex.Store({
 					}
 				})
 			})
+		},
+		ADD_CARD_TO_WORKING_DECK: ({commit, state, dispatch}) => {
+			if ((state.blankCard.question === '' && state.blankCard.questionType === 'text') || (state.blankCard.answer === '' && state.blankCard.answerType === 'text')) {
+				dispatch('SHOW_ERROR', 'Both question and answer must be entered')
+				return
+			}
+			let key = Math.random().toString(36).substr(2, 10)
+			let tmp = Object.assign({}, state.workingDeck, {cards: {
+				...state.workingDeck.cards,
+				[key]: state.blankCard
+			}})
+			dispatch('UPDATE_WORKING_DECK_IN_STATE', tmp)
+			dispatch('CREATE_BLANK_CARD')
 		},
 		UPDATE_DECK: ({commit, state}) => {
 			return new Promise((resolve, reject) => {
@@ -213,6 +240,9 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
+		UPDATE_CARD: (state, {field, value}) => {
+			state.blankCard = Object.assign({}, state.blankCard, {[field]: value})
+		},
 		SET_SUCCESS_MESSAGE: (state, {message, title}) => {
 			state.successMessage = message
 			state.successTitle = title
@@ -224,6 +254,9 @@ export default new Vuex.Store({
 		},
 		SET_WORKING_DECK: (state, deck) => {
 			state.workingDeck = Object.assign({}, state.workingDeck, deck)
+		},
+		SET_BLANK_CARD: (state, card) => {
+			state.blankCard = Object.assign({}, state.blankCard, card)
 		},
 		SIGN_OUT_USER: (state) => {
 			state.authenticated = false

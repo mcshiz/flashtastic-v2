@@ -1,7 +1,7 @@
 <template>
 	<div class="row mb-4">
 		<div class="col-9">
-			<div class="deck-title h-100"  data-toggle="modal" data-target="#deckModal">
+			<div class="deck-title"  data-toggle="modal" data-target="#deckModal">
 				{{name}}
 			</div>
 		</div>
@@ -24,6 +24,8 @@ export default {
 	.deck-title {
 		vertical-align: middle;
 		font-size: 2.25em;
+		line-height: 1em;
+		height: 1em;
 		border-bottom: 1px solid lightgray;
 		cursor: pointer;
 	}

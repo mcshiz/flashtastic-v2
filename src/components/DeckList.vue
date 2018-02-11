@@ -56,9 +56,7 @@ export default {
 		},
 		deleteDeck: function(key) {
 			if(window.confirm('Are you sure you want to delete this deck?')) {
-				this.$store.dispatch('DELETE_DECK_BY_KEY', key).then(() => {
-					console.log('deleted....')
-				})
+				this.$store.dispatch('DELETE_DECK_BY_KEY', key)
 			}
 		},
 		// fix this
