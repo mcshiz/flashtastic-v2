@@ -1,17 +1,21 @@
 <template>
-	<div class="new-question-container mt-4 row">
-		<div class="col-12">
-			<h4 class="text-left">Add a new question</h4>
+	<div class="new-question-container mt-4 col">
+		<div class="row">
+			<div class="col-12">
+				<h4 class="text-left">Add a new question</h4>
+			</div>
 		</div>
-		<div class="col-12 col-md-5 text-center mb-4">
-			<new-question-answer-fields :field="'question'" :card="blankCard" @update-card="updateNewCard"></new-question-answer-fields>
-		</div>
-		<div class="col-12 col-md-5 text-center mb-4">
-			<new-question-answer-fields :field="'answer'" :card="blankCard" @update-card="updateNewCard"></new-question-answer-fields>
-		</div>
-		<div class="col-12 col-md-2 mb-4">
-			<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
-			<button class="btn ripple btn-secondary" v-on:click="clearCard">Clear</button>
+		<div class="row">
+			<div class="col-12 col-md-5 text-center mb-4">
+				<new-question-answer-fields :field="'question'" :text="blankCard.question" :type="blankCard.questionType" @update-card="updateNewCard"></new-question-answer-fields>
+			</div>
+			<div class="col-12 col-md-5 text-center mb-4">
+				<new-question-answer-fields :field="'answer'" :text="blankCard.answer" :type="blankCard.answerType" @update-card="updateNewCard"></new-question-answer-fields>
+			</div>
+			<div class="col-12 col-md-2 mb-4">
+				<button class="btn ripple btn-success" v-on:click="addCard">Add</button>
+				<button class="btn ripple btn-secondary" v-on:click="clearCard">Clear</button>
+			</div>
 		</div>
 	</div>
 </template>
